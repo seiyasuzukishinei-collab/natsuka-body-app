@@ -1,0 +1,1869 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>夏香の肉体改造アプリ - iPhoneプレビュー対応 v31</title>
+<style>
+:root{
+  --bg:#f5f7fb;--card:#fff;--text:#172033;--muted:#748095;--line:#e6ebf1;
+  --accent:#6c73e8;--accent2:#8b91f2;--good:#1aa37a;--goodSoft:#eaf8f3;
+  --warn:#e49b2a;--warnSoft:#fff6e5;--danger:#d65b5b;--soft:#f7f9fc;--dark:#222c40;
+}
+*{box-sizing:border-box}
+html{min-height:100%;height:auto;overflow-y:auto;overflow-x:hidden}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;overflow-x:hidden}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.app{max-width:1120px;margin:0 auto;padding:16px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}
+.brand{font-weight:950;font-size:22px;letter-spacing:-.03em}
+.brand small{display:block;font-size:11px;color:var(--muted);font-weight:750;letter-spacing:0}
+.datepill{background:#fff;border:1px solid var(--line);padding:9px 12px;border-radius:999px;font-size:12px;font-weight:850}
+.page{display:none}.page.active{display:block}
+.section-title{font-size:24px;font-weight:950;letter-spacing:-.035em;margin:4px 0 14px}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}
+.span12{grid-column:span 12}.span8{grid-column:span 8}.span7{grid-column:span 7}.span6{grid-column:span 6}.span5{grid-column:span 5}.span4{grid-column:span 4}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:17px;box-shadow:0 8px 24px rgba(44,57,88,.045)}
+.hero{background:linear-gradient(145deg,#222d43,#35445f);color:#fff;border:0}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.11em;color:var(--muted);font-weight:900;margin-bottom:5px}
+.hero .eyebrow,.hero .small{color:#c2ccdc}
+h2,h3,h4{margin:0}
+.small{font-size:12px;color:var(--muted);line-height:1.55}
+.big{font-size:38px;font-weight:950;letter-spacing:-.045em;line-height:1}.unit{font-size:13px;color:var(--muted);font-weight:800;margin-left:4px}
+.status{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:900}
+.status.good{background:#dff7ee;color:#08775a}.status.warn{background:#fff1d8;color:#956313}.status.neutral{background:#edf1f6;color:#586476}
+.primary{border:0;background:var(--dark);color:#fff;border-radius:12px;padding:11px 14px;font-weight:900}
+.secondary{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:12px;padding:10px 13px;font-weight:850}
+.ghost{border:0;background:#f0f3f7;color:#4a566c;border-radius:12px;padding:10px 13px;font-weight:850}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.summary-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.summary-row:last-child{border-bottom:0}.summary-row span{font-size:12px;color:var(--muted);font-weight:800}.summary-row b{font-size:14px}
+.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}
+.field label{font-size:11px;color:var(--muted);font-weight:900}
+.field input,.field select,.field textarea{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 12px;width:100%;color:var(--text)}
+.field textarea{min-height:72px;resize:vertical}
+.hidden{display:none!important}
+
+/* Home rings */
+.ring-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.ring-card{background:rgba(255,255,255,.08);border-radius:18px;padding:14px;display:flex;align-items:center;gap:13px;min-width:0}
+.ring{--pct:50;--ring:#8ee2c6;width:126px;height:126px;border-radius:50%;background:conic-gradient(var(--ring) calc(var(--pct)*1%),rgba(255,255,255,.12) 0);position:relative;flex:none}
+.ring:after{content:"";position:absolute;inset:13px;border-radius:50%;background:#29364f}
+.ring-center{position:absolute;inset:0;display:grid;place-items:center;text-align:center;z-index:1}
+.ring-center b{font-size:24px;line-height:1}.ring-center span{display:block;font-size:10px;color:#c2ccdc;margin-top:4px;font-weight:800}
+.ring-copy{min-width:0}.ring-copy b{font-size:16px}.ring-copy .small{margin-top:4px}
+.balance-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.balance-kpi{background:#fff;border:1px solid var(--line);border-radius:17px;padding:14px}
+.balance-kpi span{display:block;font-size:10px;color:var(--muted);font-weight:850}.balance-kpi b{display:block;font-size:23px;margin-top:4px}
+.balance-kpi.good b{color:var(--good)}.balance-kpi.warn b{color:var(--warn)}
+.chart-wrap{height:360px}
+.chart-wrap.large{height:560px}
+.home-weight-chart{height:590px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 0}
+.legend span{font-size:11px;color:var(--muted);font-weight:800;display:flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block}.dot.actual{background:#6c73e8}.dot.predict{background:#1aa37a}
+
+/* Record */
+.meal-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
+.meal-tab{border:1px solid var(--line);background:#fff;border-radius:13px;padding:10px;font-weight:850}.meal-tab.active{background:#eef0ff;border-color:#cfd4ff;color:#4f58c3}
+.template-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+.template-btn{border:1px solid var(--line);background:#fbfcfe;border-radius:14px;padding:12px;text-align:left}.template-btn b{display:block}.template-btn span{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+.food-list{display:flex;flex-direction:column;gap:8px;margin-top:12px}.food-item{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:11px 12px;background:#fbfcfe}.food-item .meta{font-size:11px;color:var(--muted);margin-top:3px}.food-item .num{font-weight:950}.iconbtn{border:0;background:#eef2f6;border-radius:9px;width:34px;height:34px;font-weight:900}
+.live-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.live-strip>div{background:#f7f9fc;border-radius:13px;padding:10px}.live-strip span{display:block;font-size:10px;color:var(--muted);font-weight:850}.live-strip b{display:block;font-size:18px;margin-top:3px}
+
+/* Tasks */
+.task-progress{height:14px;border-radius:999px;background:rgba(255,255,255,.14);overflow:hidden;margin-top:12px}.task-progress>div{height:100%;border-radius:999px;background:linear-gradient(90deg,#8ee2c6,#d6f7ec);width:0}
+.task-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.task-kpis>div{background:rgba(255,255,255,.08);border-radius:13px;padding:10px}.task-kpis span{display:block;font-size:10px;color:#cbd5e1;font-weight:850}.task-kpis b{display:block;font-size:17px;margin-top:3px}
+.energy-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.energy-option{border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px;text-align:left}.energy-option.active{background:#f6f7ff;border-color:#cfd4ff}.energy-option b{display:block}.energy-option span{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+.task-list{display:flex;flex-direction:column;gap:9px;margin-top:12px}.task-item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:15px;padding:12px;background:#fbfcfe}.task-item.done{background:#eefaf5;border-color:#ccecdf}.task-check{width:42px;height:42px;border-radius:13px;border:1px solid var(--line);background:#fff;display:grid;place-items:center;font-weight:950}.task-item.done .task-check{background:#e3f7ef;color:#08775a}.task-meta{font-size:11px;color:var(--muted);margin-top:3px}.task-actions{display:flex;gap:6px}.task-actions button{border:0;background:#eef2f6;border-radius:9px;padding:7px 9px;font-size:11px;font-weight:850}
+.week-dots{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:12px}.week-dot{border:1px solid var(--line);border-radius:12px;padding:9px 4px;text-align:center;background:#fff}.week-dot b{display:block;font-size:10px}.week-dot span{display:block;font-size:18px;margin-top:3px}.week-dot.done{background:#edf9f4;border-color:#caeadf}.week-dot.done span{color:#0f9f78}
+
+/* Balance */
+.period-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.period-tabs button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-weight:850}.period-tabs button.active{background:#222c40;color:#fff;border-color:#222c40}
+.balance-detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.balance-detail-grid>div{background:#f7f9fc;border-radius:14px;padding:11px}.balance-detail-grid span{display:block;font-size:10px;color:var(--muted);font-weight:850}.balance-detail-grid b{display:block;font-size:17px;margin-top:3px}
+.advice{border-radius:15px;padding:13px;margin-top:12px;background:var(--goodSoft);border:1px solid #cdeee1;color:#096b53;font-size:12px;font-weight:800;line-height:1.55}.advice.warn{background:var(--warnSoft);border-color:#f2dfb4;color:#8a5e16}
+
+/* Gym */
+.measure-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.measure-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px}.measure-kpis>div{background:#f7f9fc;border-radius:14px;padding:11px}.measure-kpis span{display:block;font-size:10px;color:var(--muted);font-weight:850}.measure-kpis b{display:block;font-size:17px;margin-top:3px}
+.upload-box{border:1.5px dashed #cfd6e2;border-radius:16px;padding:16px;background:#fbfcfe;text-align:center;margin-top:12px}.upload-box input{max-width:100%}.upload-preview{display:flex;gap:12px;align-items:flex-start;margin-top:12px}.upload-preview img{width:120px;max-height:160px;object-fit:cover;border-radius:12px;border:1px solid var(--line)}.ocr-note{font-size:11px;color:var(--muted);line-height:1.5;text-align:left}
+.measure-history{display:flex;flex-direction:column;gap:9px;margin-top:12px}.measure-item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:14px;padding:11px 12px;background:#fff}.measure-date{width:58px;text-align:center;border-radius:12px;background:#f3f6fa;padding:7px 5px}.measure-date b{display:block;font-size:16px}.measure-date span{font-size:9px;color:var(--muted);font-weight:850}.measure-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.compare-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.compare-card{border:1px solid var(--line);border-radius:15px;padding:12px;background:#fbfcfe}.compare-card span{display:block;font-size:10px;color:var(--muted);font-weight:850}.compare-card b{display:block;font-size:20px;margin-top:3px}.up{color:var(--warn)}.down{color:var(--good)}
+
+/* Settings */
+.settings-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line)}.settings-row:last-child{border-bottom:0}
+
+/* bottom nav */
+.bottom{position:fixed;left:0;right:0;bottom:0;background:rgba(255,255,255,.95);backdrop-filter:blur(14px);border-top:1px solid var(--line);z-index:40}
+.bottom-inner{max-width:1120px;margin:auto;display:grid;grid-template-columns:repeat(6,1fr);padding:7px 8px calc(7px + env(safe-area-inset-bottom))}
+.navbtn{border:0;background:transparent;color:#8b96a8;font-size:9px;font-weight:850;padding:5px 2px;border-radius:11px}.navbtn b{display:block;font-size:19px;line-height:1.2;margin-bottom:2px}.navbtn.active{color:#26334a;background:#f1f4f8}
+.toast{position:fixed;left:50%;bottom:94px;transform:translateX(-50%) translateY(16px);opacity:0;background:#1f2937;color:#fff;border-radius:999px;padding:9px 14px;font-size:12px;font-weight:850;transition:.2s;z-index:99;pointer-events:none}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:760px){
+  .app{padding:12px}.span8,.span7,.span6,.span5,.span4{grid-column:span 12}.grid{gap:11px}.card{padding:14px;border-radius:17px}
+  .ring-grid{grid-template-columns:1fr}.ring-card{justify-content:flex-start}.ring{width:112px;height:112px}
+  .balance-kpis,.balance-detail-grid,.measure-kpis,.compare-grid{grid-template-columns:1fr 1fr}
+  .formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.template-grid{grid-template-columns:1fr}.live-strip{grid-template-columns:1fr 1fr}
+  .task-item{grid-template-columns:auto 1fr}.task-actions{grid-column:1/-1;justify-content:flex-end}.energy-options{grid-template-columns:1fr}
+  .chart-wrap{height:330px}.chart-wrap.large{height:430px}.home-weight-chart{height:470px}.measure-item{grid-template-columns:auto 1fr}.measure-item .task-actions{grid-column:1/-1}
+}
+@media(max-width:420px){
+  .balance-kpis,.balance-detail-grid,.measure-kpis,.compare-grid{grid-template-columns:1fr}
+  .live-strip{grid-template-columns:1fr}.task-kpis{grid-template-columns:1fr 1fr 1fr}
+}
+
+.home-task-mini{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center}
+.home-task-progress{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--good) var(--taskpct,0%),#edf1f5 0)}
+.home-task-progress:after{content:"";width:40px;height:40px;border-radius:50%;background:#fff;position:absolute}
+.home-task-progress{position:relative}
+.home-task-progress b{position:relative;z-index:1;font-size:12px}
+.home-task-items{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+.home-task-chip{border:1px solid var(--line);background:#fbfcfe;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:850;display:inline-flex;align-items:center;gap:6px}
+.home-task-chip.done{background:var(--goodSoft);border-color:#ccecdf;color:#08775a}
+.home-task-chip button{border:0;background:transparent;padding:0;font:inherit;color:inherit;font-weight:950}
+.home-task-right{text-align:right}
+.home-task-right b{display:block;font-size:16px}
+.home-task-right span{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+@media(max-width:760px){
+  .home-task-mini{grid-template-columns:auto 1fr}
+  .home-task-right{grid-column:1/-1;text-align:left;display:flex;gap:10px;align-items:center;justify-content:space-between}
+}
+
+
+/* v22: robust bottom scrolling in browser and embedded previews */
+html{
+  min-height:100%;
+  height:auto;
+  overflow-x:hidden;
+  overflow-y:scroll;
+  scroll-behavior:auto;
+}
+body{
+  min-height:100%;
+  height:auto !important;
+  max-height:none !important;
+  overflow-x:hidden !important;
+  overflow-y:visible !important;
+  padding-bottom:0 !important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:auto;
+}
+.app{
+  min-height:100%;
+  padding-bottom:24px;
+}
+.page{
+  min-height:0;
+  overflow:visible !important;
+}
+.page.active{
+  display:block;
+  padding-bottom:0;
+}
+.scroll-safe-area{
+  display:block;
+  width:100%;
+  height:210px;
+  pointer-events:none;
+}
+@media(max-width:760px){
+  .scroll-safe-area{height:240px}
+}
+
+
+.home-weight-card{
+  padding:20px;
+}
+.home-weight-head{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:14px;
+  align-items:start;
+}
+.home-weight-metrics{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:10px;
+  margin-top:14px;
+}
+.home-weight-metric{
+  background:#f7f9fc;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:12px;
+}
+.home-weight-metric span{
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+  font-weight:850;
+}
+.home-weight-metric b{
+  display:block;
+  font-size:21px;
+  margin-top:3px;
+}
+.home-weight-chart{
+  height:720px !important;
+  margin-top:8px;
+}
+.home-weight-card canvas{
+  display:block;
+  width:100% !important;
+  height:100% !important;
+}
+@media(max-width:760px){
+  .home-weight-card{padding:14px}
+  .home-weight-head{grid-template-columns:1fr}
+  .home-weight-metrics{grid-template-columns:1fr 1fr 1fr}
+  .home-weight-chart{height:560px !important}
+}
+@media(max-width:430px){
+  .home-weight-metrics{grid-template-columns:1fr}
+  .home-weight-chart{height:520px !important}
+}
+
+
+.mindset-hero{
+  background:linear-gradient(145deg,#fff8ef,#f4f6ff);
+  border:1px solid #ebe6dd;
+}
+.mindset-kicker{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:7px 10px;border-radius:999px;
+  background:#fff;border:1px solid var(--line);
+  font-size:11px;font-weight:900;color:#59657a;
+}
+.mindset-hero h2{font-size:30px;line-height:1.2;margin-top:10px;letter-spacing:-.04em}
+.lesson-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.lesson-card{border:1px solid var(--line);border-radius:16px;padding:13px;background:#fff}
+.lesson-card b{display:block;font-size:15px}
+.lesson-card span{display:block;font-size:11px;color:var(--muted);line-height:1.5;margin-top:4px}
+.flow-line{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;align-items:stretch;margin-top:14px}
+.flow-step{border-radius:15px;padding:13px;background:#f7f9fc;border:1px solid var(--line);text-align:center}
+.flow-step b{display:block;font-size:19px}.flow-step span{display:block;font-size:10px;color:var(--muted);margin-top:4px;line-height:1.45}
+.flow-arrow{display:none}
+.meal-example-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.meal-example{border:1px solid var(--line);border-radius:16px;padding:13px;background:#fbfcfe}
+.meal-example .meal-title{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.meal-example .meal-title b{font-size:16px}.meal-example .meal-kcal{font-weight:950}
+.meal-example ul{padding-left:18px;margin:10px 0 0;color:#586476;font-size:12px;line-height:1.6}
+.walk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:14px}
+.walk-card{border:1px solid var(--line);border-radius:15px;padding:13px;background:#fff;text-align:center}
+.walk-card strong{display:block;font-size:24px;letter-spacing:-.03em}
+.walk-card span{display:block;font-size:10px;color:var(--muted);margin-top:4px}
+.walk-card em{display:block;font-style:normal;font-size:13px;font-weight:900;margin-top:6px;color:#344054}
+.simulator-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;margin-top:14px}
+.sim-controls{display:flex;flex-direction:column;gap:12px}
+.sim-line{border:1px solid var(--line);border-radius:15px;padding:13px;background:#fbfcfe}
+.sim-line label{display:flex;justify-content:space-between;gap:10px;font-size:12px;font-weight:900}
+.sim-line input[type=range]{width:100%;margin-top:10px}
+.sim-result{border-radius:18px;background:#243149;color:#fff;padding:16px}
+.sim-result .small{color:#c4cedd}
+.sim-big{font-size:32px;font-weight:950;letter-spacing:-.04em;margin-top:5px}
+.sim-kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:13px}
+.sim-kpis>div{background:rgba(255,255,255,.08);border-radius:13px;padding:10px}
+.sim-kpis span{display:block;font-size:10px;color:#cbd5e1;font-weight:850}.sim-kpis b{display:block;font-size:16px;margin-top:3px}
+.mindset-note{border-radius:15px;padding:13px;background:#f7f9fc;border:1px solid var(--line);font-size:12px;line-height:1.6;color:#46536a}
+.mindset-note.good{background:#edf9f4;border-color:#ccecdf;color:#0a6a53}
+.mindset-note.warn{background:#fff8e9;border-color:#f0dfba;color:#835f1a}
+.weight-perspective{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:12px}
+.weight-perspective>div{border:1px solid var(--line);border-radius:15px;padding:13px;background:#fff}
+.weight-perspective span{display:block;font-size:10px;color:var(--muted);font-weight:850}.weight-perspective b{display:block;font-size:17px;margin-top:3px}
+.book-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 12px;font-size:12px;font-weight:900;color:#445067}
+.book-btn.active{background:#222c40;color:#fff;border-color:#222c40}
+@media(max-width:760px){
+  .lesson-grid,.meal-example-grid{grid-template-columns:1fr}
+  .flow-line{grid-template-columns:1fr 1fr}
+  .walk-grid{grid-template-columns:1fr 1fr}
+  .simulator-grid{grid-template-columns:1fr}
+  .weight-perspective{grid-template-columns:1fr}
+  .mindset-hero h2{font-size:25px}
+}
+
+
+.learning-course{
+  background:linear-gradient(145deg,#25314a,#384966);
+  color:#fff;border:0;
+}
+.learning-course .eyebrow,.learning-course .small{color:#c7d1df}
+.course-head{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:start}
+.course-progress-wrap{margin-top:14px}
+.course-progress-track{height:12px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
+.course-progress-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#8ee2c6,#d8f8ee)}
+.course-progress-meta{display:flex;justify-content:space-between;gap:12px;margin-top:6px;font-size:10px;color:#c7d1df;font-weight:850}
+.step-nav{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:15px}
+.step-nav button{
+  border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);color:#d9e1eb;
+  border-radius:12px;padding:9px 5px;font-size:10px;font-weight:900;min-height:52px;
+}
+.step-nav button.active{background:#fff;color:#263149;border-color:#fff}
+.step-nav button.done{background:#dff7ee;color:#08775a;border-color:#dff7ee}
+.lesson-panel{
+  margin-top:14px;background:#fff;color:var(--text);border-radius:18px;padding:16px;
+}
+.lesson-panel .eyebrow{color:var(--muted)}
+.lesson-title{font-size:23px;font-weight:950;letter-spacing:-.035em}
+.lesson-lead{font-size:13px;line-height:1.65;color:#526078;margin-top:7px}
+.lesson-body{margin-top:14px}
+.lesson-simple-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.lesson-simple-card{border:1px solid var(--line);background:#fbfcfe;border-radius:15px;padding:13px}
+.lesson-simple-card b{display:block;font-size:16px}
+.lesson-simple-card span{display:block;font-size:11px;line-height:1.5;color:var(--muted);margin-top:4px}
+.lesson-equation{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:center;margin-top:12px}
+.lesson-equation .box{border:1px solid var(--line);border-radius:15px;padding:14px;text-align:center;background:#f8fafc}
+.lesson-equation .box b{display:block;font-size:21px}.lesson-equation .box span{display:block;font-size:10px;color:var(--muted);margin-top:4px}
+.lesson-equation .sign{font-weight:950;font-size:23px;color:#778397}
+.lesson-choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:12px}
+.lesson-choice{
+  border:1px solid var(--line);background:#fff;border-radius:15px;padding:12px;text-align:left;
+}
+.lesson-choice.selected{background:#eef0ff;border-color:#cfd4ff}
+.lesson-choice b{display:block;font-size:14px}.lesson-choice span{display:block;font-size:10px;color:var(--muted);margin-top:4px;line-height:1.45}
+.lesson-check{
+  border-radius:15px;padding:13px;margin-top:12px;background:#f7f9fc;border:1px solid var(--line);
+  font-size:12px;line-height:1.6;
+}
+.lesson-check.good{background:#edf9f4;border-color:#ccecdf;color:#0a6a53}
+.lesson-check.warn{background:#fff8e9;border-color:#f0dfba;color:#835f1a}
+.lesson-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px}
+.lesson-actions .right{display:flex;gap:8px;flex-wrap:wrap}
+.course-summary{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:12px
+}
+.course-summary>div{background:rgba(255,255,255,.08);border-radius:13px;padding:10px}
+.course-summary span{display:block;font-size:10px;color:#c7d1df;font-weight:850}
+.course-summary b{display:block;font-size:16px;margin-top:3px}
+.reference-divider{
+  display:flex;align-items:center;gap:10px;margin:6px 0 2px
+}
+.reference-divider:before,.reference-divider:after{content:"";height:1px;background:var(--line);flex:1}
+.reference-divider span{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:.08em}
+.plan-preview{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:12px}
+.plan-preview>div{border:1px solid var(--line);border-radius:15px;padding:12px;background:#fbfcfe}
+.plan-preview span{display:block;font-size:10px;color:var(--muted);font-weight:850}
+.plan-preview b{display:block;font-size:15px;margin-top:3px}
+.course-complete{
+  display:none;margin-top:12px;border-radius:15px;padding:13px;background:#edf9f4;border:1px solid #ccecdf;color:#0a6a53;font-size:12px;font-weight:850;line-height:1.5
+}
+.course-complete.show{display:block}
+@media(max-width:760px){
+  .course-head{grid-template-columns:1fr}
+  .step-nav{grid-template-columns:repeat(4,1fr)}
+  .lesson-simple-grid,.course-summary{grid-template-columns:1fr 1fr}
+  .lesson-equation{grid-template-columns:1fr}
+  .lesson-equation .sign{transform:rotate(90deg);text-align:center}
+  .lesson-choice-grid,.plan-preview{grid-template-columns:1fr}
+}
+
+
+/* v28 iPhone / embedded WebView stability */
+html,body{
+  width:100%;
+  min-height:100%;
+  height:auto;
+  margin:0;
+  overflow-x:hidden;
+}
+html{
+  overflow-y:auto;
+  -webkit-text-size-adjust:100%;
+}
+body{
+  min-height:100vh;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:calc(110px + env(safe-area-inset-bottom)) !important;
+}
+.app{
+  min-height:100vh;
+  padding-bottom:24px;
+}
+.page{
+  min-height:0;
+  overflow:visible !important;
+}
+.page.active{
+  display:block;
+}
+.bottom{
+  position:fixed;
+  left:0;right:0;bottom:0;
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+  background:#fff;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.bottom-inner{
+  padding-bottom:7px !important;
+}
+.scroll-safe-area{
+  height:24px !important;
+}
+button,input,select,textarea{
+  font-size:16px;
+}
+.navbtn{
+  font-size:9px;
+}
+@supports (height: 100dvh){
+  body,.app{min-height:100dvh}
+}
+
+
+/* v30: zero-JS fallback for iPhone/ChatGPT HTML preview */
+.page:target{
+  display:block !important;
+}
+body:has(.page:target) .page.active:not(:target){
+  display:none !important;
+}
+.book-btn{
+  text-decoration:none;
+  cursor:pointer;
+}
+#page-mindset:target{
+  animation:none;
+}
+
+
+/* v31: pure CSS 8-step course for iPhone preview */
+.css-course{display:none}
+#page-mindset:target .css-course{display:block}
+#page-mindset:target .learning-course{display:none}
+
+.css-course input[type=radio]{position:absolute;opacity:0;pointer-events:none}
+.css-course-panel{display:none}
+#course-step-1:checked ~ .css-course-panels #css-step-1,
+#course-step-2:checked ~ .css-course-panels #css-step-2,
+#course-step-3:checked ~ .css-course-panels #css-step-3,
+#course-step-4:checked ~ .css-course-panels #css-step-4,
+#course-step-5:checked ~ .css-course-panels #css-step-5,
+#course-step-6:checked ~ .css-course-panels #css-step-6,
+#course-step-7:checked ~ .css-course-panels #css-step-7,
+#course-step-8:checked ~ .css-course-panels #css-step-8{display:block}
+
+.css-course-nav{display:grid;grid-template-columns:repeat(8,1fr);gap:6px;margin-top:14px}
+.css-course-nav label{
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.06);
+  color:#d9e1eb;border-radius:12px;padding:9px 5px;font-size:10px;
+  font-weight:900;min-height:52px;text-align:center;cursor:pointer;
+}
+#course-step-1:checked ~ .css-course-nav label[for=course-step-1],
+#course-step-2:checked ~ .css-course-nav label[for=course-step-2],
+#course-step-3:checked ~ .css-course-nav label[for=course-step-3],
+#course-step-4:checked ~ .css-course-nav label[for=course-step-4],
+#course-step-5:checked ~ .css-course-nav label[for=course-step-5],
+#course-step-6:checked ~ .css-course-nav label[for=course-step-6],
+#course-step-7:checked ~ .css-course-nav label[for=course-step-7],
+#course-step-8:checked ~ .css-course-nav label[for=course-step-8]{
+  background:#fff;color:#263149;border-color:#fff;
+}
+.css-course-card{
+  background:linear-gradient(145deg,#25314a,#384966);
+  color:#fff;border-radius:20px;padding:16px;
+}
+.css-course-card .small,.css-course-card .eyebrow{color:#c7d1df}
+.css-course-panels{margin-top:14px}
+.css-course-panel{
+  background:#fff;color:var(--text);border-radius:18px;padding:16px;
+}
+.css-course-panel .eyebrow{color:var(--muted)}
+.css-course-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px}
+.css-course-actions label{
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:12px;padding:11px 14px;font-weight:900;font-size:12px;cursor:pointer;
+  border:1px solid var(--line);background:#fff;color:#344054;
+}
+.css-course-actions label.next{background:#25314a;color:#fff;border-color:#25314a}
+@media(max-width:760px){
+  .css-course-nav{grid-template-columns:repeat(4,1fr)}
+}
+
+</style>
+
+<meta name="theme-color" content="#25314a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="夏香の肉体改造">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">夏香の肉体改造アプリ <small>食事・運動・実測を1つの流れに・iPhone安定版</small></div>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end">
+      <a class="book-btn" id="mindsetTopBtn" href="#page-mindset">考え方</a>
+      <div class="datepill" id="topDate">—</div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <section class="page active" id="page-home">
+    <div class="section-title">ホーム</div>
+    <div class="grid">
+      <div class="card hero span12">
+        <div class="eyebrow">Today</div>
+        <h3>今日やることを一目で</h3>
+        <div class="ring-grid">
+          <div class="ring-card">
+            <div class="ring" id="foodRing" style="--pct:0;--ring:#9aa3ff">
+              <div class="ring-center"><div><b id="foodRingPct">0%</b><span>食事</span></div></div>
+            </div>
+            <div class="ring-copy">
+              <b id="foodRingTitle">あと — kcal</b>
+              <div class="small" id="foodRingText">今日の摂取目安まで</div>
+            </div>
+          </div>
+          <div class="ring-card">
+            <div class="ring" id="exerciseRing" style="--pct:0;--ring:#8ee2c6">
+              <div class="ring-center"><div><b id="exerciseRingPct">0%</b><span>運動</span></div></div>
+            </div>
+            <div class="ring-copy">
+              <b id="exerciseRingTitle">あと — kcal</b>
+              <div class="small" id="exerciseRingText">今日の活動目標まで</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card span12">
+        <div class="eyebrow">Balance overview</div>
+        <h3>今日・今週・今月</h3>
+        <div class="balance-kpis" style="margin-top:12px">
+          <div class="balance-kpi good"><span>今日の収支</span><b id="homeTodayBalance">—</b></div>
+          <div class="balance-kpi good"><span>今週の収支</span><b id="homeWeekBalance">—</b></div>
+          <div class="balance-kpi good"><span>今月の収支</span><b id="homeMonthBalance">—</b></div>
+        </div>
+      </div>
+
+
+      <div class="card span12">
+        <div class="home-task-mini">
+          <div class="home-task-progress" id="homeTaskMiniRing" style="--taskpct:0%">
+            <b id="homeTaskMiniPct">0%</b>
+          </div>
+
+          <div>
+            <div class="eyebrow">Today's exercise tasks</div>
+            <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap">
+              <h3>今日の運動タスク</h3>
+              <button type="button" class="secondary" data-go="tasks" style="padding:7px 10px">一覧を見る</button>
+            </div>
+            <div class="home-task-items" id="homeTaskMiniItems"></div>
+          </div>
+
+          <div class="home-task-right">
+            <div>
+              <b id="homeTaskMiniDone">0 / 0</b>
+              <span>今日の達成</span>
+            </div>
+            <div style="margin-top:7px">
+              <b id="homeTaskMiniKcal">0 kcal</b>
+              <span>タスクで消費</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card span12 home-weight-card">
+        <div class="home-weight-head">
+          <div>
+            <div class="eyebrow">Weight trend</div>
+            <h3 style="font-size:24px">予測体重と実測体重</h3>
+            <div class="small" style="margin-top:5px">48kg目標への予測ラインと、ジム測定の実測値を同じ時間軸で大きく比較します。</div>
+          </div>
+          <div class="status neutral" id="homeWeightGap">差 —</div>
+        </div>
+
+        <div class="home-weight-metrics">
+          <div class="home-weight-metric"><span>現在体重</span><b id="homeChartCurrentWeight">—</b></div>
+          <div class="home-weight-metric"><span>最新実測</span><b id="homeChartActualWeight">—</b></div>
+          <div class="home-weight-metric"><span>目標体重</span><b id="homeChartGoalWeight">48.0 kg</b></div>
+        </div>
+
+        <div class="legend" style="margin-top:14px"><span><i class="dot predict"></i>予測</span><span><i class="dot actual"></i>実測</span></div>
+        <div class="home-weight-chart"><canvas id="homeWeightChart"></canvas></div>
+      </div>
+
+      <div class="card span6">
+        <div class="eyebrow">Next action</div>
+        <h3>今日のおすすめ</h3>
+        <div class="advice" id="homeAdvice">記録を始めると今日の目安が表示されます。</div>
+        <div class="actions">
+          <button type="button" class="primary" data-go="record">食事を記録</button>
+          <button type="button" class="secondary" data-go="tasks">運動タスクへ</button>
+        </div>
+      </div>
+
+
+      <div class="card span6">
+        <div class="eyebrow">Guide</div>
+        <h3>「なぜこれをやるの？」がわかる</h3>
+        <div class="small" style="margin-top:5px">食事1,400kcal、45分歩く意味、1週間で見る理由を、数字と具体例で確認できます。</div>
+        <div class="actions"><a class="primary" href="#page-mindset" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none">ダイエットの考え方を見る</a></div>
+      </div>
+
+      <div class="card span6">
+        <div class="eyebrow">Goal</div>
+        <h3>48.0kg / 2027年4月30日</h3>
+        <div class="summary-row"><span>現在</span><b id="homeCurrentWeight">64.4 kg</b></div>
+        <div class="summary-row"><span>残り</span><b id="homeRemainingKg">16.4 kg</b></div>
+        <div class="summary-row"><span>必要ペース</span><b id="homeRequiredPace">—</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECORD -->
+  <section class="page" id="page-record">
+    <div class="section-title">今日の記録</div>
+    <div class="grid">
+      <div class="card span12">
+        <div class="eyebrow">Today's meals</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div>
+            <h3>食事だけをシンプルに記録</h3>
+            <div class="small">運動は「運動タスク」で完了すると自動反映します。</div>
+          </div>
+          <button type="button" class="secondary" id="copyYesterdayMealsBtn">昨日の食事をコピー</button>
+        </div>
+
+        <div class="meal-tabs" id="mealTabs">
+          <button type="button" class="meal-tab active" data-meal="朝食">朝食</button>
+          <button type="button" class="meal-tab" data-meal="昼食">昼食</button>
+          <button type="button" class="meal-tab" data-meal="夕食">夕食</button>
+          <button type="button" class="meal-tab" data-meal="間食">間食</button>
+        </div>
+
+        <div class="template-grid" id="mealTemplateButtons"></div>
+
+        <div class="formgrid" style="margin-top:14px">
+          <div class="field"><label>名前</label><input id="mealNameInput" placeholder="いつもの朝食"></div>
+          <div class="field"><label>カロリー</label><input id="mealKcalInput" type="number" min="0" placeholder="380"></div>
+          <div class="field full"><label>内容・メモ</label><input id="mealNoteInput" placeholder="ご飯150g＋卵＋味噌汁"></div>
+        </div>
+        <div class="actions">
+          <button type="button" class="primary" id="addMealBtn">この内容で登録</button>
+          <button type="button" class="secondary" id="saveMealTemplateBtn">定番として保存</button>
+        </div>
+      </div>
+
+      <div class="card span7">
+        <div class="eyebrow">Today's log</div>
+        <h3>今日食べたもの</h3>
+        <div class="food-list" id="todayFoodList"></div>
+      </div>
+
+      <div class="card span5">
+        <div class="eyebrow">Live balance</div>
+        <h3>今日の現在地</h3>
+        <div class="live-strip">
+          <div><span>摂取</span><b id="recordIntake">0</b></div>
+          <div><span>運動</span><b id="recordExercise">0</b></div>
+          <div><span>推定消費</span><b id="recordBurn">0</b></div>
+          <div><span>収支</span><b id="recordBalance">0</b></div>
+        </div>
+        <div class="advice" id="recordAdvice">食事を登録すると収支が更新されます。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TASKS -->
+  <section class="page" id="page-tasks">
+    <div class="section-title">運動タスク</div>
+    <div class="grid">
+      <div class="card hero span12">
+        <div class="eyebrow">Movement mission</div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap">
+          <div>
+            <h3>運動したくなる「今日のミッション」</h3>
+            <div class="small">タスクを完了すると、今日の運動記録へ自動追加されます。</div>
+          </div>
+          <div class="status good" id="taskProgressStatus">0%</div>
+        </div>
+        <div class="task-progress"><div id="taskProgressBar"></div></div>
+        <div class="task-kpis">
+          <div><span>今週達成</span><b id="taskDoneCount">0</b></div>
+          <div><span>継続ポイント</span><b id="taskPoints">0 pt</b></div>
+          <div><span>連続日</span><b id="taskStreak">0日</b></div>
+        </div>
+      </div>
+
+      <div class="card span6">
+        <div class="eyebrow">Energy mode</div>
+        <h3>今日の元気に合わせる</h3>
+        <div class="energy-options" id="energyOptions">
+          <button type="button" class="energy-option" data-mode="low"><b>低め</b><span>5〜10分でOK</span></button>
+          <button type="button" class="energy-option active" data-mode="normal"><b>ふつう</b><span>いつもの内容</span></button>
+          <button type="button" class="energy-option" data-mode="high"><b>元気</b><span>少し長め</span></button>
+        </div>
+        <div class="advice" id="energyAdvice">今日は「ふつう」。1つ終えれば十分です。</div>
+      </div>
+
+      <div class="card span6">
+        <div class="eyebrow">Habit calendar</div>
+        <h3>今週の習慣</h3>
+        <div class="week-dots" id="taskWeekDots"></div>
+      </div>
+
+      <div class="card span12">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+          <div>
+            <div class="eyebrow">Tasks</div>
+            <h3>今日の運動候補</h3>
+          </div>
+          <button type="button" class="primary" id="toggleTaskFormBtn">＋ タスク追加</button>
+        </div>
+        <div class="task-list" id="taskList"></div>
+
+        <div class="card hidden" id="taskForm" style="margin-top:12px;box-shadow:none">
+          <div class="formgrid">
+            <div class="field"><label>タスク名</label><input id="taskNameInput" placeholder="夕方20分散歩"></div>
+            <div class="field"><label>種類</label><select id="taskKindInput"><option>ウォーキング</option><option>早歩き</option><option>筋トレ</option><option>ジョギング</option><option>自転車</option><option>ヨガ・ストレッチ</option><option>その他</option></select></div>
+            <div class="field"><label>基本時間（分）</label><input id="taskMinutesInput" type="number" value="20" min="1"></div>
+            <div class="field"><label>消費カロリー</label><input id="taskKcalInput" type="number" value="70" min="1"></div>
+            <div class="field"><label>週目標回数</label><input id="taskTargetInput" type="number" value="3" min="1" max="14"></div>
+          </div>
+          <div class="actions">
+            <button type="button" class="primary" id="saveTaskBtn">保存</button>
+            <button type="button" class="ghost" id="cancelTaskBtn">閉じる</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BALANCE -->
+  <section class="page" id="page-balance">
+    <div class="section-title">カロリー収支</div>
+    <div class="grid">
+      <div class="card span12">
+        <div class="period-tabs" id="balancePeriodTabs">
+          <button type="button" class="active" data-period="today">今日</button>
+          <button type="button" data-period="week">今週</button>
+          <button type="button" data-period="month">今月</button>
+        </div>
+        <div class="balance-detail-grid">
+          <div><span>摂取</span><b id="balanceIntake">—</b></div>
+          <div><span>運動</span><b id="balanceExercise">—</b></div>
+          <div><span>推定消費</span><b id="balanceBurn">—</b></div>
+          <div><span>収支</span><b id="balanceNet">—</b></div>
+        </div>
+        <div class="advice" id="balanceAdvice">期間を選ぶと詳しく確認できます。</div>
+      </div>
+
+      <div class="card span12">
+        <div class="eyebrow">Balance trend</div>
+        <h3 id="balanceChartTitle">今日の収支</h3>
+        <div class="chart-wrap large"><canvas id="balanceTrendChart"></canvas></div>
+      </div>
+
+      <div class="card span12">
+        <div class="eyebrow">Goal pace</div>
+        <h3>48kg目標との比較</h3>
+        <div class="summary-row"><span>現在の平均赤字</span><b id="balanceAvgDeficit">—</b></div>
+        <div class="summary-row"><span>目標日に必要な目安</span><b id="balanceRequiredDeficit">—</b></div>
+        <div class="summary-row"><span>今月の減少予測</span><b id="balanceMonthLoss">—</b></div>
+        <div class="summary-row"><span>月末予測体重</span><b id="balanceMonthWeight">—</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GYM -->
+  <section class="page" id="page-gym">
+    <div class="section-title">ジム測定</div>
+    <div class="grid">
+      <div class="card span12">
+        <div class="measure-top">
+          <div>
+            <div class="eyebrow">Gym measurement</div>
+            <h3>測定票から実測値を登録</h3>
+            <div class="small">写真をアップして確認 → 必要なら修正 → 保存、という流れを想定しています。</div>
+          </div>
+          <button type="button" class="primary" id="toggleGymFormBtn">＋ 測定を追加</button>
+        </div>
+
+        <div class="upload-box hidden" id="gymForm">
+          <input id="gymPhotoInput" type="file" accept="image/*">
+          <div class="upload-preview hidden" id="gymPhotoPreviewWrap">
+            <img id="gymPhotoPreview" alt="測定票プレビュー">
+            <div class="ocr-note">
+              <b>画像読み取りについて</b><br>
+              このHTML試作では画像プレビューまで対応しています。正式版ではAI/OCRで測定票から数値を抽出し、
+              下の入力欄へ候補値を自動入力して、本人が確認して保存する形にできます。
+            </div>
+          </div>
+
+          <div class="formgrid" style="margin-top:14px">
+            <div class="field"><label>測定日</label><input id="gymDateInput" type="date"></div>
+            <div class="field"><label>測定機器</label><input id="gymSourceInput" value="ジム TANITA"></div>
+            <div class="field"><label>体重 kg</label><input id="gymWeightInput" type="number" step="0.1"></div>
+            <div class="field"><label>体脂肪率 %</label><input id="gymFatRateInput" type="number" step="0.1"></div>
+            <div class="field"><label>体脂肪量 kg</label><input id="gymFatMassInput" type="number" step="0.1"></div>
+            <div class="field"><label>筋肉量 kg</label><input id="gymMuscleInput" type="number" step="0.1"></div>
+            <div class="field"><label>BMI</label><input id="gymBmiInput" type="number" step="0.1"></div>
+            <div class="field"><label>内臓脂肪</label><input id="gymVisceralInput" type="number" step="1"></div>
+            <div class="field"><label>基礎代謝 kcal</label><input id="gymBmrInput" type="number"></div>
+            <div class="field"><label>四肢骨格筋量 kg</label><input id="gymSkeletalInput" type="number" step="0.1"></div>
+          </div>
+          <div class="actions">
+            <button type="button" class="primary" id="saveGymMeasureBtn">この内容で保存</button>
+            <button type="button" class="ghost" id="closeGymFormBtn">閉じる</button>
+          </div>
+        </div>
+
+        <div class="measure-kpis">
+          <div><span>最新体重</span><b id="gymLatestWeight">—</b></div>
+          <div><span>体脂肪率</span><b id="gymLatestFatRate">—</b></div>
+          <div><span>脂肪量</span><b id="gymLatestFatMass">—</b></div>
+          <div><span>筋肉量</span><b id="gymLatestMuscle">—</b></div>
+        </div>
+      </div>
+
+      <div class="card span12">
+        <div class="eyebrow">Actual trend</div>
+        <h3>実測値の変化</h3>
+        <div class="period-tabs" id="gymMetricTabs">
+          <button type="button" class="active" data-metric="weight">体重</button>
+          <button type="button" data-metric="fatRate">体脂肪率</button>
+          <button type="button" data-metric="fatMass">脂肪量</button>
+          <button type="button" data-metric="muscle">筋肉量</button>
+        </div>
+        <div class="chart-wrap large"><canvas id="gymTrendChart"></canvas></div>
+      </div>
+
+      <div class="card span12">
+        <div class="eyebrow">Change summary</div>
+        <h3>初回から最新まで</h3>
+        <div class="compare-grid">
+          <div class="compare-card"><span>体重</span><b id="gymWeightDelta">—</b></div>
+          <div class="compare-card"><span>体脂肪量</span><b id="gymFatMassDelta">—</b></div>
+          <div class="compare-card"><span>筋肉量</span><b id="gymMuscleDelta">—</b></div>
+        </div>
+        <div class="advice" id="gymAdjustmentAdvice">実測が増えると、翌月の目標調整案を表示します。</div>
+      </div>
+
+      <div class="card span12">
+        <div class="eyebrow">History</div>
+        <h3>測定履歴</h3>
+        <div class="measure-history" id="gymHistory"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- MINDSET / LEARNING -->
+  <section class="page" id="page-mindset">
+    <div class="section-title">ダイエットの考え方</div>
+    <div class="grid">
+
+      
+<div class="card span12 css-course">
+  <div class="css-course-card">
+    <div class="eyebrow">iPhone preview safe mode</div>
+    <h3 style="font-size:24px">夏香のダイエット教室</h3>
+    <div class="small" style="margin-top:5px">この8STEPはJavaScriptを使わず動くため、iPhoneのChatGPT内プレビューでも「次へ」で切り替えられます。</div>
+    <input type="radio" name="css-course-step" id="course-step-1" checked>
+<input type="radio" name="css-course-step" id="course-step-2" >
+<input type="radio" name="css-course-step" id="course-step-3" >
+<input type="radio" name="css-course-step" id="course-step-4" >
+<input type="radio" name="css-course-step" id="course-step-5" >
+<input type="radio" name="css-course-step" id="course-step-6" >
+<input type="radio" name="css-course-step" id="course-step-7" >
+<input type="radio" name="css-course-step" id="course-step-8" >
+    <div class="css-course-nav"><label for="course-step-1">1<br>仕組み</label>
+<label for="course-step-2">2<br>1,400kcal</label>
+<label for="course-step-3">3<br>献立</label>
+<label for="course-step-4">4<br>運動</label>
+<label for="course-step-5">5<br>組合せ</label>
+<label for="course-step-6">6<br>体重</label>
+<label for="course-step-7">7<br>実測</label>
+<label for="course-step-8">8<br>今週</label></div>
+    <div class="css-course-panels">
+      <div class="css-course-panel" id="css-step-1">
+<div class="eyebrow">STEP 1</div>
+<div class="lesson-title">痩せる仕組みを知る</div>
+<div class="lesson-lead">最初に覚えるのは「1日だけ」ではなく「1週間の積み重ね」で考えることです。</div>
+<div class="lesson-body"><div class="lesson-equation">
+<div class="box"><b>食事</b><span>摂取カロリー</span></div><div class="sign">−</div>
+<div class="box"><b>生活＋運動</b><span>消費カロリー</span></div><div class="sign">＝</div>
+<div class="box"><b>赤字 / 黒字</b><span>7日間で見る</span></div>
+</div><div class="lesson-check good">今日1日だけで体脂肪の結果は決まりません。毎日の小さい赤字を1週間で見ます。</div></div>
+<div class="css-course-actions"><div><label for="course-step-2" class="next">次へ →</label></div></div>
+</div><div class="css-course-panel" id="css-step-2">
+<div class="eyebrow">STEP 2</div>
+<div class="lesson-title">1,400kcalって、どのくらい？</div>
+<div class="lesson-lead">3食を普通に食べながら量を整えるイメージを持ちます。</div>
+<div class="lesson-body"><div class="lesson-simple-grid">
+<div class="lesson-simple-card"><b>朝 350〜400</b><span>ご飯100g＋納豆＋卵＋味噌汁など</span></div>
+<div class="lesson-simple-card"><b>昼 450〜500</b><span>ご飯120g＋鶏むね＋サラダ＋スープなど</span></div>
+<div class="lesson-simple-card"><b>夜 500〜550</b><span>ご飯100g＋魚・肉＋野菜＋汁物など</span></div>
+</div><div class="lesson-check">「食べない」ではなく、主食＋たんぱく質＋野菜を食べながら全体量を整えます。</div></div>
+<div class="css-course-actions"><label for="course-step-1">← 前へ</label><div><label for="course-step-3" class="next">次へ →</label></div></div>
+</div><div class="css-course-panel" id="css-step-3">
+<div class="eyebrow">STEP 3</div>
+<div class="lesson-title">毎回、献立を考えなくていい</div>
+<div class="lesson-lead">朝・昼・夜に数個ずつ自分の型を持っておきます。</div>
+<div class="lesson-body"><div class="lesson-choice-grid">
+<div class="lesson-choice"><b>朝A　納豆卵ご飯</b><span>約360kcal</span></div>
+<div class="lesson-choice"><b>朝B　トースト＋ヨーグルト</b><span>約350kcal</span></div>
+<div class="lesson-choice"><b>昼A　鶏むね定食</b><span>約460kcal</span></div>
+<div class="lesson-choice"><b>夜A　焼き魚定食</b><span>約520kcal</span></div>
+</div><div class="lesson-check good">型を選ぶだけにすると、毎日の意思決定を減らせます。</div></div>
+<div class="css-course-actions"><label for="course-step-2">← 前へ</label><div><label for="course-step-4" class="next">次へ →</label></div></div>
+</div><div class="css-course-panel" id="css-step-4">
+<div class="eyebrow">STEP 4</div>
+<div class="lesson-title">運動量をイメージする</div>
+<div class="lesson-lead">時間と消費カロリーの目安を結びつけます。</div>
+<div class="lesson-body"><div class="lesson-simple-grid">
+<div class="lesson-simple-card"><b>10分</b><span>約30〜40kcal</span></div>
+<div class="lesson-simple-card"><b>30分</b><span>約120〜150kcal</span></div>
+<div class="lesson-simple-card"><b>45分</b><span>約180〜220kcal</span></div>
+</div><div class="lesson-check good">45分を週5回なら、週約900〜1,100kcal程度の追加消費イメージです。</div></div>
+<div class="css-course-actions"><label for="course-step-3">← 前へ</label><div><label for="course-step-5" class="next">次へ →</label></div></div>
+</div><div class="css-course-panel" id="css-step-5">
+<div class="eyebrow">STEP 5</div>
+<div class="lesson-title">食事と運動を組み合わせる</div>
+<div class="lesson-lead">食事だけで赤字を作らず、運動と合わせて週の収支を作ります。</div>
+<div class="lesson-body"><div class="lesson-equation">
+<div class="box"><b>食事</b><span>約1,400kcal/日</span></div><div class="sign">＋</div>
+<div class="box"><b>歩行</b><span>45分 × 週5日</span></div><div class="sign">→</div>
+<div class="box"><b>週の赤字</b><span>無理なく積み上げる</span></div>
+</div><div class="lesson-check">1日で取り返すより、1週間で整える方が続けやすいです。</div></div>
+<div class="css-course-actions"><label for="course-step-4">← 前へ</label><div><label for="course-step-6" class="next">次へ →</label></div></div>
+</div><div class="css-course-panel" id="css-step-6">
+<div class="eyebrow">STEP 6</div>
+<div class="lesson-title">体重が増えた日の考え方</div>
+<div class="lesson-lead">昨日より増えていても、それだけで脂肪が増えたとは判断しません。</div>
+<div class="lesson-body"><div class="lesson-simple-grid">
+<div class="lesson-simple-card"><b>＋0.7kg</b><span>1日の体重変動</span></div>
+<div class="lesson-simple-card"><b>原因はいろいろ</b><span>水分・塩分・食事量・排便・月経周期など</span></div>
+<div class="lesson-simple-card"><b>判断は週・月</b><span>週平均とジム実測を見る</span></div>
+</div></div>
+<div class="css-course-actions"><label for="course-step-5">← 前へ</label><div><label for="course-step-7" class="next">次へ →</label></div></div>
+</div><div class="css-course-panel" id="css-step-7">
+<div class="eyebrow">STEP 7</div>
+<div class="lesson-title">ジム測定で答え合わせする</div>
+<div class="lesson-lead">カロリー計算は予測。実測値で計画が現実と合っているか確認します。</div>
+<div class="lesson-body"><div class="lesson-check">予測より減り方が遅ければ、食事・運動・目標時期のどこを調整するか考えます。自動で厳しくするのではなく、実測から見直します。</div></div>
+<div class="css-course-actions"><label for="course-step-6">← 前へ</label><div><label for="course-step-8" class="next">次へ →</label></div></div>
+</div><div class="css-course-panel" id="css-step-8">
+<div class="eyebrow">STEP 8</div>
+<div class="lesson-title">今週の計画を作る</div>
+<div class="lesson-lead">最後は「48kgになる」ではなく、今週何をするかまで小さくします。</div>
+<div class="lesson-body"><div class="plan-preview">
+<div><span>食事</span><b>平均 1,350〜1,450kcal</b></div>
+<div><span>ウォーキング</span><b>45分 × 週4〜5回</b></div>
+<div><span>筋トレ</span><b>週2回</b></div>
+<div><span>評価</span><b>週の収支・月の実測</b></div>
+</div><div class="lesson-check good">今週のゴールは「完璧に痩せる」ではなく、この行動を無理なく繰り返すことです。</div></div>
+<div class="css-course-actions"><label for="course-step-7">← 前へ</label><div><label for="course-step-1" class="next">最初に戻る</label></div></div>
+</div>
+    </div>
+  </div>
+</div>
+
+<div class="card span12 learning-course">
+        <div class="course-head">
+          <div>
+            <div class="eyebrow">Natsuka diet course</div>
+            <h3 style="font-size:24px">夏香のダイエット教室</h3>
+            <div class="small" style="margin-top:5px">順番に理解して、最後は「今週何をするか」まで落とし込みます。1STEP 2〜3分くらいの想定です。</div>
+          </div>
+          <div class="status good" id="courseStatus">STEP 1 / 8</div>
+        </div>
+
+        <div class="course-progress-wrap">
+          <div class="course-progress-track"><div class="course-progress-fill" id="courseProgressFill"></div></div>
+          <div class="course-progress-meta"><span id="courseProgressText">0% 完了</span><span>全部一気にやらなくてOK</span></div>
+        </div>
+
+        <div class="step-nav" id="stepNav">
+          <button type="button" data-step="1">1<br>仕組み</button>
+          <button type="button" data-step="2">2<br>1,400kcal</button>
+          <button type="button" data-step="3">3<br>献立の型</button>
+          <button type="button" data-step="4">4<br>運動量</button>
+          <button type="button" data-step="5">5<br>組み合わせ</button>
+          <button type="button" data-step="6">6<br>体重の見方</button>
+          <button type="button" data-step="7">7<br>実測比較</button>
+          <button type="button" data-step="8">8<br>今週の計画</button>
+        </div>
+
+        <div class="course-summary">
+          <div><span>現在体重</span><b id="courseCurrentWeight">64.4kg</b></div>
+          <div><span>目標体重</span><b id="courseGoalWeight">48.0kg</b></div>
+          <div><span>必要ペース</span><b id="courseWeeklyPace">—</b></div>
+          <div><span>1日の赤字目安</span><b id="courseDailyDeficit">—</b></div>
+        </div>
+
+        <div class="lesson-panel">
+          <div class="eyebrow" id="lessonEyebrow">STEP 1</div>
+          <div class="lesson-title" id="lessonTitle">痩せる仕組みを知る</div>
+          <div class="lesson-lead" id="lessonLead">最初に覚えるのは「1日だけ」ではなく「1週間の積み重ね」で考えることです。</div>
+          <div class="lesson-body" id="lessonBody">
+            <div class="lesson-equation">
+              <div class="box"><b>食事</b><span>摂取カロリー</span></div>
+              <div class="sign">−</div>
+              <div class="box"><b>生活＋運動</b><span>消費カロリー</span></div>
+              <div class="sign">＝</div>
+              <div class="box"><b>赤字 / 黒字</b><span>7日間で見る</span></div>
+            </div>
+            <div class="lesson-check good">
+              今日1日だけで体脂肪の結果は決まりません。毎日の小さい赤字を、1週間でまとめて見るのが基本です。
+            </div>
+          </div>
+
+          <div class="lesson-actions">
+            <button type="button" class="ghost" id="lessonPrevBtn">← 前へ</button>
+            <div class="right">
+              <button type="button" class="secondary" id="lessonCompleteBtn">このSTEPを理解した</button>
+              <button type="button" class="primary" id="lessonNextBtn">次へ →</button>
+            </div>
+          </div>
+
+          <div class="course-complete" id="courseCompleteMessage">
+            8STEP完了。ここからは「完璧にやる」より、今週の計画を淡々と実行して、週・月で結果を確認していきます。
+          </div>
+        </div>
+      </div>
+
+      <div class="card span12">
+        <div class="reference-divider"><span>いつでも見返せる教科書</span></div>
+        <div class="small" style="text-align:center">下の内容は、学習後も必要なところだけ自由に見返せます。</div>
+      </div>
+
+      <div class="card span12 mindset-hero">
+        <span class="mindset-kicker">夏香さん用・まずこれだけ</span>
+        <h2>毎日、体重で評価しない。<br>毎日は「行動」、結果は「週・月」で見る。</h2>
+        <div class="small" style="margin-top:10px">
+          64.4kgから48kgを目指すとき、大事なのは「今日だけ頑張ること」ではなく、
+          食事と運動を無理なく積み上げて、週単位の赤字を作ることです。
+        </div>
+        <div class="lesson-grid">
+          <div class="lesson-card"><b>毎日見る</b><span>食事・運動・今日できた行動</span></div>
+          <div class="lesson-card"><b>毎週見る</b><span>カロリー収支・平均赤字・運動回数</span></div>
+          <div class="lesson-card"><b>毎月見る</b><span>体重・脂肪量・筋肉量・ジム実測</span></div>
+        </div>
+      </div>
+
+      <div class="card span12">
+        <div class="eyebrow">1. How it works</div>
+        <h3>「今日の行動」が結果につながる流れ</h3>
+        <div class="flow-line">
+          <div class="flow-step"><b>食事</b><span>摂取を整える<br>例：1,350〜1,450kcal</span></div>
+          <div class="flow-step"><b>＋ 運動</b><span>歩く・筋トレで<br>無理なく消費を追加</span></div>
+          <div class="flow-step"><b>＝ 週の赤字</b><span>1日でなく<br>7日間の合計を見る</span></div>
+          <div class="flow-step"><b>→ 体の変化</b><span>体重・脂肪・筋肉を<br>月単位で確認</span></div>
+        </div>
+        <div class="mindset-note good" style="margin-top:12px">
+          食べた分を「罰として運動する」のではなく、食事と運動を合わせて1週間の収支を作ります。
+        </div>
+      </div>
+
+      <div class="card span12">
+        <div class="eyebrow">2. Meal image</div>
+        <h3>1日1,400kcalって、実際どのくらい？</h3>
+        <div class="small">3食を普通に食べながら、量を整えるイメージです。</div>
+        <div class="meal-example-grid">
+          <div class="meal-example">
+            <div class="meal-title"><b>朝食</b><span class="meal-kcal">約360 kcal</span></div>
+            <ul><li>ご飯100g</li><li>納豆1パック</li><li>卵1個</li><li>味噌汁</li></ul>
+          </div>
+          <div class="meal-example">
+            <div class="meal-title"><b>昼食</b><span class="meal-kcal">約470 kcal</span></div>
+            <ul><li>ご飯120g</li><li>鶏むね肉100g</li><li>サラダ・副菜</li><li>スープ</li></ul>
+          </div>
+          <div class="meal-example">
+            <div class="meal-title"><b>夕食</b><span class="meal-kcal">約520 kcal</span></div>
+            <ul><li>ご飯100g</li><li>魚または肉の主菜</li><li>野菜のおかず</li><li>冷奴・味噌汁など</li></ul>
+          </div>
+        </div>
+        <div class="mindset-note" style="margin-top:12px">
+          「ダイエット＝食べない」ではなく、主食・たんぱく質・野菜を食べながら、全体量を整える考え方です。
+        </div>
+      </div>
+
+      <div class="card span12">
+        <div class="eyebrow">3. Walking image</div>
+        <h3>歩く量をカロリーでイメージする</h3>
+        <div class="small">64kg前後での概算。速度や坂道などで実際の消費量は変わります。</div>
+        <div class="walk-grid">
+          <div class="walk-card"><strong>10分</strong><span>気分が低い日</span><em>約30〜40 kcal</em></div>
+          <div class="walk-card"><strong>30分</strong><span>短めの運動</span><em>約120〜150 kcal</em></div>
+          <div class="walk-card"><strong>45分</strong><span>基本の目標</span><em>約180〜220 kcal</em></div>
+          <div class="walk-card"><strong>60分</strong><span>余裕がある日</span><em>約240〜280 kcal</em></div>
+        </div>
+        <div class="mindset-note good" style="margin-top:12px">
+          例えば45分を週5回なら、ウォーキングだけでも週約900〜1,100kcal程度の追加消費イメージになります。
+        </div>
+      </div>
+
+      <div class="card span12">
+        <div class="eyebrow">4. Try it</div>
+        <h3>行動シミュレーター</h3>
+        <div class="small">食事とウォーキングを変えると、週・月のイメージがどう変わるか試せます。</div>
+
+        <div class="simulator-grid">
+          <div class="sim-controls">
+            <div class="sim-line">
+              <label><span>1日の食事</span><b id="simMealValue">1400 kcal</b></label>
+              <input id="simMeal" type="range" min="1200" max="1800" step="50" value="1400">
+            </div>
+            <div class="sim-line">
+              <label><span>ウォーキング時間</span><b id="simWalkValue">45分</b></label>
+              <input id="simWalk" type="range" min="0" max="90" step="10" value="45">
+            </div>
+            <div class="sim-line">
+              <label><span>ウォーキングする日</span><b id="simDaysValue">5日/週</b></label>
+              <input id="simDays" type="range" min="0" max="7" step="1" value="5">
+            </div>
+          </div>
+
+          <div class="sim-result">
+            <div class="small">この条件なら</div>
+            <div class="sim-big" id="simWeeklyNet">— kcal/週</div>
+            <div class="small">推定週間カロリー収支</div>
+            <div class="sim-kpis">
+              <div><span>平均/日</span><b id="simDailyNet">—</b></div>
+              <div><span>月の目安</span><b id="simMonthlyLoss">—</b></div>
+              <div><span>歩行消費/週</span><b id="simWalkBurn">—</b></div>
+              <div><span>48kg必要目安</span><b id="simRequired">—</b></div>
+            </div>
+          </div>
+        </div>
+        <div class="mindset-note" id="simAdvice" style="margin-top:12px">条件を動かしてみてください。</div>
+      </div>
+
+      <div class="card span6">
+        <div class="eyebrow">5. Scale mindset</div>
+        <h3>体重が増えた日に読む</h3>
+        <div class="weight-perspective">
+          <div><span>昨日比</span><b>＋0.7kg</b></div>
+          <div><span>それだけで</span><b>脂肪＋0.7kgとは限らない</b></div>
+          <div><span>見るべきもの</span><b>週平均・月実測</b></div>
+        </div>
+        <div class="small" style="margin-top:10px">
+          水分、塩分、食事量、排便、月経周期、測定時間でも体重は動きます。
+        </div>
+      </div>
+
+      <div class="card span6">
+        <div class="eyebrow">6. Natsuka's current target</div>
+        <h3>今の目標を小さく見る</h3>
+        <div class="summary-row"><span>現在</span><b id="mindCurrentWeight">64.4 kg</b></div>
+        <div class="summary-row"><span>最終目標</span><b id="mindGoalWeight">48.0 kg</b></div>
+        <div class="summary-row"><span>必要な平均ペース</span><b id="mindWeeklyPace">—</b></div>
+        <div class="summary-row"><span>必要赤字の目安</span><b id="mindDailyDeficit">—</b></div>
+        <div class="mindset-note good" style="margin-top:12px">
+          今週やるべきことは「48kgになること」ではなく、食事と運動の予定を無理なく積み上げることです。
+        </div>
+      </div>
+
+      <div class="card span12">
+        <div style="display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap">
+          <div>
+            <div class="eyebrow">Back to action</div>
+            <h3>理解したら、今日の行動へ戻る</h3>
+          </div>
+          <div class="actions" style="margin-top:0">
+            <button type="button" class="primary" data-go="record">食事を記録</button>
+            <button type="button" class="secondary" data-go="tasks">運動タスクへ</button>
+            <button type="button" class="ghost" data-go="home">ホームへ戻る</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="page" id="page-settings">
+    <div class="section-title">設定</div>
+    <div class="grid">
+      <div class="card span6">
+        <div class="eyebrow">Goal</div>
+        <h3>目標設定</h3>
+        <div class="formgrid" style="margin-top:12px">
+          <div class="field"><label>目標体重 kg</label><input id="settingGoalWeight" type="number" step="0.1"></div>
+          <div class="field"><label>目標日</label><input id="settingGoalDate" type="date"></div>
+          <div class="field"><label>基礎代謝 kcal</label><input id="settingBmr" type="number"></div>
+          <div class="field"><label>生活活動係数</label><select id="settingActivity"><option value="1.20">低め 1.20</option><option value="1.375">普通 1.375</option><option value="1.55">高め 1.55</option></select></div>
+          <div class="field"><label>1日の運動目標 kcal</label><input id="settingExerciseTarget" type="number"></div>
+        </div>
+        <div class="actions"><button type="button" class="primary" id="saveSettingsBtn">保存</button></div>
+      </div>
+      <div class="card span6">
+        <div class="eyebrow">Policy</div>
+        <h3>続けるための表示ルール</h3>
+        <div class="settings-row"><div><b>黒字の日も失敗扱いしない</b><div class="small">週・月単位で調整</div></div></div>
+        <div class="settings-row"><div><b>運動は罰ではなく習慣</b><div class="small">疲れた日は短縮版でOK</div></div></div>
+        <div class="settings-row"><div><b>目標は実測から見直す</b><div class="small">ジム測定後に翌月案を提案</div></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+<div class="scroll-safe-area" aria-hidden="true"></div>
+
+<nav class="bottom"><div class="bottom-inner">
+  <button type="button" class="navbtn active" data-page="home"><b>⌂</b>ホーム</button>
+  <button type="button" class="navbtn" data-page="record"><b>＋</b>今日の記録</button>
+  <button type="button" class="navbtn" data-page="tasks"><b>✓</b>運動タスク</button>
+  <button type="button" class="navbtn" data-page="balance"><b>↗</b>カロリー収支</button>
+  <button type="button" class="navbtn" data-page="gym"><b>◎</b>ジム測定</button>
+  <button type="button" class="navbtn" data-page="settings"><b>⚙</b>設定</button>
+</div></nav>
+<div class="toast" id="toast">保存しました</div>
+
+<script>
+const KEY='body_change_v20';
+function deepClone(x){return JSON.parse(JSON.stringify(x))}
+const todayISO=()=>new Date().toISOString().slice(0,10);
+const addDays=(iso,n)=>{const d=new Date(iso+'T12:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+const fmt=n=>Number(Math.round(n||0)).toLocaleString('ja-JP');
+const signed=n=>`${n>0?'+':''}${fmt(n)}`;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const daysBetween=(a,b)=>Math.max(0,Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000));
+
+const initialState={
+  settings:{goalWeight:48,goalDate:'2027-04-30',bmr:1217,activity:1.375,exerciseTarget:120,currentWeight:64.4,startWeight:64.4},
+  mealTemplates:[
+    {id:'m1',meal:'朝食',name:'平日の朝食',kcal:380,note:'ご飯150g＋卵＋味噌汁'},
+    {id:'m2',meal:'朝食',name:'軽めの朝食',kcal:250,note:'ヨーグルト＋バナナ'},
+    {id:'m3',meal:'昼食',name:'いつもの昼食',kcal:520,note:'主食＋おかず＋汁物'},
+    {id:'m4',meal:'夕食',name:'いつもの夕食',kcal:470,note:'主食少なめ＋主菜＋副菜'},
+    {id:'m5',meal:'間食',name:'いつもの間食',kcal:130,note:'小さめのおやつ'}
+  ],
+  tasks:[
+    {id:'t1',name:'夕方の散歩',kind:'ウォーキング',minutes:30,kcal:105,target:3,points:2,active:true},
+    {id:'t2',name:'家で筋トレ',kind:'筋トレ',minutes:20,kcal:85,target:2,points:3,active:true},
+    {id:'t3',name:'ストレッチ',kind:'ヨガ・ストレッチ',minutes:10,kcal:30,target:3,points:1,active:true}
+  ],
+  completions:{},
+  energyMode:'normal',
+  learning:{currentStep:1,completed:[]},
+  days:{},
+  gym:[
+    {id:'g1',date:'2026-07-18',source:'ジム TANITA',weight:65.4,fatRate:41.8,fatMass:27.3,muscle:35.9,bmi:29.1,visceral:8,bmr:1205,skeletal:15.9},
+    {id:'g2',date:'2026-09-08',source:'ジム TANITA',weight:64.4,fatRate:39.7,fatMass:25.6,muscle:36.6,bmi:28.6,visceral:7,bmr:1217,skeletal:16.4}
+  ]
+};
+function seedDemo(s){
+  const t=todayISO();
+  s.days[addDays(t,-2)]={foods:[{name:'食事合計',meal:'合計',kcal:1520,note:'サンプル'}],exercises:[{name:'散歩',kind:'ウォーキング',minutes:30,kcal:110}]};
+  s.days[addDays(t,-1)]={foods:[{name:'食事合計',meal:'合計',kcal:1430,note:'サンプル'}],exercises:[{name:'筋トレ',kind:'筋トレ',minutes:20,kcal:80}]};
+  s.days[t]={foods:[
+    {name:'平日の朝食',meal:'朝食',kcal:380,note:'ご飯150g＋卵＋味噌汁'},
+    {name:'いつもの昼食',meal:'昼食',kcal:520,note:'主食＋おかず＋汁物'},
+    {name:'いつもの間食',meal:'間食',kcal:130,note:'小さめのおやつ'}
+  ],exercises:[]};
+}
+let state=null;
+try{state=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!state){state=deepClone(initialState);seedDemo(state)}
+if(!state.learning || typeof state.learning!=='object'){
+  state.learning={currentStep:1,completed:[]};
+}
+if(!Array.isArray(state.learning.completed))state.learning.completed=[];
+if(!Number.isFinite(Number(state.learning.currentStep)))state.learning.currentStep=1;
+state.learning.currentStep=Math.max(1,Math.min(8,Number(state.learning.currentStep)));
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+function ensureDay(date=todayISO()){if(!state.days[date])state.days[date]={foods:[],exercises:[]};return state.days[date]}
+function intake(date=todayISO()){return ensureDay(date).foods.reduce((s,x)=>s+Number(x.kcal||0),0)}
+function exercise(date=todayISO()){return ensureDay(date).exercises.reduce((s,x)=>s+Number(x.kcal||0),0)}
+function burn(date=todayISO()){return Math.round(Number(state.settings.bmr)*Number(state.settings.activity)+exercise(date))}
+function net(date=todayISO()){return intake(date)-burn(date)}
+function baseDailyBurn(){return Math.round(Number(state.settings.bmr)*Number(state.settings.activity))}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1200)}
+
+function weekDates(base=todayISO()){
+  const d=new Date(base+'T12:00:00'),dow=(d.getDay()+6)%7,mon=new Date(d);mon.setDate(d.getDate()-dow);
+  return Array.from({length:7},(_,i)=>{const x=new Date(mon);x.setDate(mon.getDate()+i);return x.toISOString().slice(0,10)})
+}
+function monthDates(base=todayISO()){
+  const d=new Date(base+'T12:00:00'),y=d.getFullYear(),m=d.getMonth(),last=new Date(y,m+1,0).getDate();
+  return Array.from({length:last},(_,i)=>new Date(y,m,i+1,12).toISOString().slice(0,10))
+}
+function sumPeriod(dates){return dates.reduce((a,d)=>{const day=state.days[d];if(day){a.intake+=intake(d);a.exercise+=exercise(d);a.burn+=burn(d);a.net+=net(d);a.recorded++}return a},{intake:0,exercise:0,burn:0,net:0,recorded:0})}
+function goalPlan(){
+  const days=Math.max(1,daysBetween(todayISO(),state.settings.goalDate));
+  const kg=Math.max(0,state.settings.currentWeight-state.settings.goalWeight);
+  const daily=kg*7700/days;
+  return {days,kg,daily,weekly:daily*7,weeklyKg:kg/(days/7)}
+}
+function targetFoodCalories(){
+  const p=goalPlan();
+  return Math.max(900,Math.round(baseDailyBurn()-p.daily));
+}
+function page(name){
+  document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+name));
+  if(document.getElementById('mindsetTopBtn'))document.getElementById('mindsetTopBtn').classList.toggle('active',name==='mindset');
+  document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.page===name));
+  window.scrollTo(0,0);
+  if(name==='home')renderHome();
+  if(name==='record')renderRecord();
+  if(name==='tasks')renderTasks();
+  if(name==='balance')renderBalance();
+  if(name==='gym')renderGym();
+  if(name==='mindset')renderMindset();
+  if(name==='settings')renderSettings();
+}
+document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click',()=>page(b.dataset.page)));
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-go]');
+  if(b) page(b.dataset.go);
+});
+
+/* canvas helpers */
+function prepCanvas(canvas){
+  const r=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1,w=Math.max(1,r.width||600),h=Math.max(1,r.height||300);
+  canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);
+  const c=canvas.getContext('2d');c.setTransform(dpr,0,0,dpr,0,0);return {c,w,h};
+}
+function drawMultiLine(canvas,labels,series){
+  const {c,w,h}=prepCanvas(canvas);c.clearRect(0,0,w,h);
+  const p={l:52,r:22,t:26,b:42},iw=w-p.l-p.r,ih=h-p.t-p.b;
+  const vals=series.flatMap(s=>s.values.filter(v=>v!=null).map(Number));if(!vals.length)return;
+  let min=Math.min(...vals),max=Math.max(...vals);if(min===max){min-=1;max+=1}const pad=Math.max((max-min)*.18,.6);min-=pad;max+=pad;
+  c.strokeStyle='#e8edf3';c.lineWidth=1;
+  for(let i=0;i<5;i++){const y=p.t+ih*i/4;c.beginPath();c.moveTo(p.l,y);c.lineTo(w-p.r,y);c.stroke();const v=max-(max-min)*i/4;c.fillStyle='#748095';c.font='12px system-ui';c.textAlign='right';c.fillText(v.toFixed(1),p.l-8,y+4)}
+  const colors=['#1aa37a','#6c73e8','#e49b2a'];
+  series.forEach((s,si)=>{
+    c.strokeStyle=colors[si%colors.length];c.lineWidth=4;c.beginPath();let started=false;
+    s.values.forEach((v,i)=>{if(v==null)return;const x=labels.length===1?p.l+iw/2:p.l+iw*i/(labels.length-1),y=p.t+ih*(1-(v-min)/(max-min));if(!started){c.moveTo(x,y);started=true}else c.lineTo(x,y)});
+    c.stroke();
+    s.values.forEach((v,i)=>{if(v==null)return;const x=labels.length===1?p.l+iw/2:p.l+iw*i/(labels.length-1),y=p.t+ih*(1-(v-min)/(max-min));c.fillStyle='#fff';c.strokeStyle=colors[si%colors.length];c.lineWidth=3;c.beginPath();c.arc(x,y,6,0,Math.PI*2);c.fill();c.stroke();c.fillStyle=colors[si%colors.length];c.font='700 12px system-ui';c.textAlign='center';c.fillText(Number(v).toFixed(1)+'kg',x,y-13)})
+  });
+  labels.forEach((l,i)=>{const x=labels.length===1?p.l+iw/2:p.l+iw*i/(labels.length-1);c.fillStyle='#748095';c.font='12px system-ui';c.textAlign='center';c.fillText(l,x,h-14)});
+}
+function drawBars(canvas,labels,values){
+  const {c,w,h}=prepCanvas(canvas);c.clearRect(0,0,w,h);
+  const p={l:45,r:16,t:22,b:40},iw=w-p.l-p.r,ih=h-p.t-p.b,mid=p.t+ih/2,max=Math.max(300,...values.map(v=>Math.abs(v||0)));
+  c.strokeStyle='#dfe5ec';c.beginPath();c.moveTo(p.l,mid);c.lineTo(w-p.r,mid);c.stroke();
+  values.forEach((v,i)=>{const slot=iw/values.length,bw=Math.min(34,slot*.52),x=p.l+slot*i+(slot-bw)/2,bh=Math.abs(v)/max*(ih/2-12);c.fillStyle=v<=0?'#1aa37a':'#e49b2a';c.fillRect(x,v<=0?mid:mid-bh,bw,bh);c.fillStyle='#748095';c.font='10px system-ui';c.textAlign='center';c.fillText(labels[i],x+bw/2,h-13)});
+}
+
+/* HOME */
+
+function renderHomeTaskMini(){
+  const active=state.tasks.filter(t=>t.active!==false);
+  const done=active.filter(t=>taskDone(todayISO(),t.id));
+  const pct=active.length?Math.round(done.length/active.length*100):0;
+  const taskKcalDone=ensureDay().exercises
+    .filter(x=>x.source==='task')
+    .reduce((s,x)=>s+Number(x.kcal||0),0);
+
+  const ring=document.getElementById('homeTaskMiniRing');
+  if(!ring)return;
+  ring.style.setProperty('--taskpct',pct+'%');
+  document.getElementById('homeTaskMiniPct').textContent=pct+'%';
+  document.getElementById('homeTaskMiniDone').textContent=`${done.length} / ${active.length}`;
+  document.getElementById('homeTaskMiniKcal').textContent=fmt(taskKcalDone)+' kcal';
+
+  const box=document.getElementById('homeTaskMiniItems');
+  box.innerHTML='';
+  active.slice(0,3).forEach(t=>{
+    const isDone=taskDone(todayISO(),t.id);
+    const chip=document.createElement('div');
+    chip.className='home-task-chip'+(isDone?' done':'');
+    const mins=taskMinutes(t);
+    chip.innerHTML=isDone
+      ? `<span>✓</span><span>${t.name}</span>`
+      : `<button type="button" aria-label="${t.name}を完了">○</button><span>${t.name} ${mins}分</span>`;
+    if(!isDone){
+      chip.querySelector('button').onclick=()=>completeTask(t);
+    }
+    box.appendChild(chip);
+  });
+
+  if(active.length>3){
+    const more=document.createElement('div');
+    more.className='home-task-chip';
+    more.textContent=`＋${active.length-3}件`;
+    box.appendChild(more);
+  }
+}
+
+function projectedWeightSeries(){
+  const gym=[...state.gym].sort((a,b)=>a.date.localeCompare(b.date));
+  const start=gym[0]?.weight||state.settings.startWeight;
+  const labels=[],pred=[],actual=[];
+  const startDate=gym[0]?.date||todayISO();
+  for(let i=0;i<7;i++){
+    const d=addDays(startDate,Math.round(i*daysBetween(startDate,state.settings.goalDate)/6));
+    labels.push(d.slice(5).replace('-','/'));
+    const frac=daysBetween(startDate,d)/Math.max(1,daysBetween(startDate,state.settings.goalDate));
+    pred.push(Number((start+(state.settings.goalWeight-start)*frac).toFixed(2)));
+    const nearest=gym.find(x=>Math.abs(daysBetween(x.date,d))<=18);
+    actual.push(nearest?nearest.weight:null);
+  }
+  return {labels,pred,actual};
+}
+function renderHome(){
+  document.getElementById('topDate').textContent=new Date().toLocaleDateString('ja-JP',{month:'long',day:'numeric',weekday:'short'});
+  const today=todayISO(),food=intake(today),ex=exercise(today),foodTarget=targetFoodCalories(),exTarget=Number(state.settings.exerciseTarget||120);
+  const fp=clamp(food/Math.max(1,foodTarget)*100,0,100),ep=clamp(ex/Math.max(1,exTarget)*100,0,100);
+  foodRing.style.setProperty('--pct',fp);exerciseRing.style.setProperty('--pct',ep);foodRingPct.textContent=Math.round(fp)+'%';exerciseRingPct.textContent=Math.round(ep)+'%';
+  foodRingTitle.textContent=food<=foodTarget?`あと ${fmt(foodTarget-food)} kcal`:`目安を ${fmt(food-foodTarget)} kcal超過`;
+  exerciseRingTitle.textContent=ex<exTarget?`あと ${fmt(exTarget-ex)} kcal`:'今日の運動目標達成';
+  const week=sumPeriod(weekDates()),month=sumPeriod(monthDates());
+  homeTodayBalance.textContent=signed(net(today))+' kcal';homeWeekBalance.textContent=signed(week.net)+' kcal';homeMonthBalance.textContent=signed(month.net)+' kcal';
+  [homeTodayBalance,homeWeekBalance,homeMonthBalance].forEach(el=>el.parentElement.className='balance-kpi '+(Number(el.textContent.replace(/[^\d+-]/g,''))<=0?'good':'warn'));
+  const p=goalPlan();homeCurrentWeight.textContent=state.settings.currentWeight.toFixed(1)+' kg';homeRemainingKg.textContent=p.kg.toFixed(1)+' kg';homeRequiredPace.textContent=`約 ${p.weeklyKg.toFixed(2)} kg/週`;
+  const ws=projectedWeightSeries();drawMultiLine(homeWeightChart,ws.labels,[{values:ws.pred},{values:ws.actual}]);
+  const latest=(()=>{const a=state.gym.slice().sort((x,y)=>x.date.localeCompare(y.date));return a[a.length-1]})();
+  const predNow=state.settings.currentWeight;
+  homeWeightGap.textContent=latest?`最新実測 ${latest.weight.toFixed(1)}kg`:'実測待ち';
+  const cw=document.getElementById('homeChartCurrentWeight');
+  const aw=document.getElementById('homeChartActualWeight');
+  const gw=document.getElementById('homeChartGoalWeight');
+  if(cw)cw.textContent=state.settings.currentWeight.toFixed(1)+' kg';
+  if(aw)aw.textContent=latest?latest.weight.toFixed(1)+' kg':'—';
+  if(gw)gw.textContent=state.settings.goalWeight.toFixed(1)+' kg';
+  renderHomeTaskMini();
+  if(net(today)<=0)homeAdvice.textContent='今日は現在赤字です。食事を極端に削らず、予定している運動をこなせれば十分です。';
+  else homeAdvice.textContent='今日は現在黒字です。1日で取り返さず、今週全体で少しずつ調整できます。';
+}
+
+/* RECORD */
+let currentMeal='朝食';
+mealTabs.querySelectorAll('.meal-tab').forEach(b=>b.addEventListener('click',()=>{mealTabs.querySelectorAll('.meal-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');currentMeal=b.dataset.meal;renderMealTemplates()}));
+function renderMealTemplates(){
+  mealTemplateButtons.innerHTML='';
+  state.mealTemplates.filter(x=>x.meal===currentMeal).forEach(t=>{
+    const b=document.createElement('button');b.className='template-btn';b.innerHTML=`<b>${t.name}</b><span>${t.kcal} kcal・${t.note||''}</span>`;
+    b.onclick=()=>{mealNameInput.value=t.name;mealKcalInput.value=t.kcal;mealNoteInput.value=t.note||''};mealTemplateButtons.appendChild(b)
+  })
+}
+function renderRecord(){
+  renderMealTemplates();
+  todayFoodList.innerHTML='';const d=ensureDay();
+  if(!d.foods.length)todayFoodList.innerHTML='<div class="small">まだ食事記録はありません。</div>';
+  d.foods.forEach((x,i)=>{const el=document.createElement('div');el.className='food-item';el.innerHTML=`<div><b>${x.name}</b><div class="meta">${x.meal}・${x.note||''}</div></div><div class="num">${fmt(x.kcal)} kcal</div><button type="button" class="iconbtn">×</button>`;el.querySelector('button').onclick=()=>{d.foods.splice(i,1);save();renderRecord();renderHome()};todayFoodList.appendChild(el)});
+  recordIntake.textContent=fmt(intake())+' kcal';recordExercise.textContent=fmt(exercise())+' kcal';recordBurn.textContent=fmt(burn())+' kcal';recordBalance.textContent=signed(net())+' kcal';
+  recordAdvice.textContent=net()<=0?'現在は赤字。食事は「残り枠」を見ながら無理なく。':'現在は黒字。ただし運動タスクや今週の収支で調整できます。';
+}
+addMealBtn.onclick=()=>{const name=mealNameInput.value.trim(),kcal=Number(mealKcalInput.value);if(!name||!kcal){showToast('名前とカロリーを入力してください');return}ensureDay().foods.push({name,meal:currentMeal,kcal,note:mealNoteInput.value.trim()});save();renderRecord();renderHome();showToast('食事を記録しました')};
+saveMealTemplateBtn.onclick=()=>{const name=mealNameInput.value.trim(),kcal=Number(mealKcalInput.value);if(!name||!kcal){showToast('名前とカロリーを入力してください');return}state.mealTemplates.push({id:'m'+Date.now(),meal:currentMeal,name,kcal,note:mealNoteInput.value.trim()});save();renderMealTemplates();showToast('定番に保存しました')};
+copyYesterdayMealsBtn.onclick=()=>{ensureDay().foods=deepClone(ensureDay(addDays(todayISO(),-1)).foods);save();renderRecord();renderHome();showToast('昨日の食事をコピーしました')};
+
+/* TASKS */
+function taskKey(date,id){return date+'__'+id}
+function taskDone(date,id){return !!state.completions[taskKey(date,id)]}
+function taskMinutes(t){return state.energyMode==='low'?Math.max(5,Math.round(t.minutes*.4)):state.energyMode==='high'?Math.round(t.minutes*1.3):t.minutes}
+function taskKcal(t){return state.energyMode==='low'?Math.max(15,Math.round(t.kcal*.4)):state.energyMode==='high'?Math.round(t.kcal*1.3):t.kcal}
+function completeTask(t){
+  const key=taskKey(todayISO(),t.id);if(state.completions[key])return;
+  state.completions[key]=true;
+  ensureDay().exercises.push({name:t.name,kind:t.kind,minutes:taskMinutes(t),kcal:taskKcal(t),source:'task'});
+  save();renderTasks();renderRecord();renderHome();showToast('運動タスクを完了・運動記録へ反映しました');
+}
+function taskStats(){
+  const dates=weekDates();let done=0,pts=0,target=0;
+  state.tasks.filter(t=>t.active!==false).forEach(t=>{target+=t.target;dates.forEach(d=>{if(taskDone(d,t.id)){done++;pts+=t.points}})});
+  let streak=0;for(let i=0;i<30;i++){const d=addDays(todayISO(),-i),any=state.tasks.some(t=>taskDone(d,t.id));if(any)streak++;else if(i>0)break}
+  return {done,pts,target,streak,dates}
+}
+function renderTasks(){
+  energyOptions.querySelectorAll('.energy-option').forEach(b=>b.classList.toggle('active',b.dataset.mode===state.energyMode));
+  const s=taskStats(),pct=s.target?Math.min(100,Math.round(s.done/s.target*100)):0;
+  taskProgressBar.style.width=pct+'%';taskProgressStatus.textContent=pct+'%';taskDoneCount.textContent=s.done+'/'+s.target;taskPoints.textContent=s.pts+' pt';taskStreak.textContent=s.streak+'日';
+  energyAdvice.textContent=state.energyMode==='low'?'今日は低め。5〜10分版でも達成です。':state.energyMode==='high'?'今日は元気。余裕があれば少し長めに。':'今日はふつう。1つ終えれば十分です。';
+  taskWeekDots.innerHTML='';s.dates.forEach((d,i)=>{const any=state.tasks.some(t=>taskDone(d,t.id)),el=document.createElement('div');el.className='week-dot '+(any?'done':'');el.innerHTML=`<b>${['月','火','水','木','金','土','日'][i]}</b><span>${any?'✓':'・'}</span>`;taskWeekDots.appendChild(el)});
+  taskList.innerHTML='';state.tasks.filter(t=>t.active!==false).forEach(t=>{const done=taskDone(todayISO(),t.id),el=document.createElement('div');el.className='task-item'+(done?' done':'');el.innerHTML=`<button type="button" class="task-check">${done?'✓':'○'}</button><div><b>${t.name}</b><div class="task-meta">${t.kind}・${taskMinutes(t)}分・約${taskKcal(t)}kcal・週${t.target}回</div></div><div class="task-actions"><button type="button" data-delete>削除</button></div>`;el.querySelector('.task-check').onclick=()=>{if(!done)completeTask(t)};el.querySelector('[data-delete]').onclick=()=>{t.active=false;save();renderTasks();showToast('タスクを削除しました')};taskList.appendChild(el)})
+}
+energyOptions.querySelectorAll('.energy-option').forEach(b=>b.onclick=()=>{state.energyMode=b.dataset.mode;save();renderTasks()});
+toggleTaskFormBtn.onclick=()=>taskForm.classList.toggle('hidden');cancelTaskBtn.onclick=()=>taskForm.classList.add('hidden');
+saveTaskBtn.onclick=()=>{const name=taskNameInput.value.trim();if(!name){showToast('タスク名を入力してください');return}state.tasks.push({id:'t'+Date.now(),name,kind:taskKindInput.value,minutes:Number(taskMinutesInput.value)||20,kcal:Number(taskKcalInput.value)||70,target:Number(taskTargetInput.value)||3,points:2,active:true});save();taskForm.classList.add('hidden');renderTasks();showToast('タスクを追加しました')};
+
+/* BALANCE */
+let balancePeriod='today';
+balancePeriodTabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{balancePeriodTabs.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');balancePeriod=b.dataset.period;renderBalance()});
+function periodData(){
+  if(balancePeriod==='today'){const d=todayISO();return {labels:['今日'],values:[net(d)],sum:{intake:intake(d),exercise:exercise(d),burn:burn(d),net:net(d),recorded:1}}}
+  if(balancePeriod==='week'){const dates=weekDates(),sum=sumPeriod(dates);return {labels:['月','火','水','木','金','土','日'],values:dates.map(d=>state.days[d]?net(d):0),sum}}
+  const dates=monthDates(),sum=sumPeriod(dates),weeks=[];for(let i=0;i<dates.length;i+=7)weeks.push(dates.slice(i,i+7).reduce((s,d)=>s+(state.days[d]?net(d):0),0));return {labels:weeks.map((_,i)=>`${i+1}週`),values:weeks,sum}
+}
+function renderBalance(){
+  const p=periodData();balanceIntake.textContent=fmt(p.sum.intake)+' kcal';balanceExercise.textContent=fmt(p.sum.exercise)+' kcal';balanceBurn.textContent=fmt(p.sum.burn)+' kcal';balanceNet.textContent=signed(p.sum.net)+' kcal';
+  balanceChartTitle.textContent=balancePeriod==='today'?'今日の収支':balancePeriod==='week'?'今週の日々の収支':'今月の週ごとの収支';drawBars(balanceTrendChart,p.labels,p.values);
+  balanceAdvice.className='advice'+(p.sum.net>0?' warn':'');balanceAdvice.textContent=p.sum.net<=0?'この期間は赤字です。無理に追加で削らず、現在の生活ペースを維持できます。':'この期間は黒字です。食事か運動を小さく調整する余地があります。';
+  const w=sumPeriod(weekDates()),avg=w.recorded?w.net/w.recorded:0,plan=goalPlan(),m=sumPeriod(monthDates()),remaining=monthDates().filter(d=>d>todayISO()).length,proj=m.net+avg*remaining,loss=proj<0?Math.abs(proj)/7700:0;
+  balanceAvgDeficit.textContent=w.recorded?signed(Math.round(avg))+' kcal/日':'—';balanceRequiredDeficit.textContent='-'+fmt(plan.daily)+' kcal/日';balanceMonthLoss.textContent=proj<0?'約 -'+loss.toFixed(2)+' kg':'減少予測なし';balanceMonthWeight.textContent=(state.settings.currentWeight+(avg*remaining/7700)).toFixed(1)+' kg';
+}
+
+/* GYM */
+let gymMetric='weight';
+toggleGymFormBtn.onclick=()=>gymForm.classList.remove('hidden');closeGymFormBtn.onclick=()=>gymForm.classList.add('hidden');
+gymPhotoInput.onchange=e=>{const f=e.target.files?.[0];if(!f){gymPhotoPreviewWrap.classList.add('hidden');return}gymPhotoPreview.src=URL.createObjectURL(f);gymPhotoPreviewWrap.classList.remove('hidden')};
+gymMetricTabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{gymMetricTabs.querySelectorAll('button').forEach(x=>x.classList.remove('active'));b.classList.add('active');gymMetric=b.dataset.metric;renderGymChart()});
+function renderGymChart(){
+  const rows=[...state.gym].sort((a,b)=>a.date.localeCompare(b.date)),labels=rows.map(x=>x.date.slice(5).replace('-','/')),vals=rows.map(x=>x[gymMetric]);
+  drawMultiLine(gymTrendChart,labels,[{values:vals}]);
+}
+function renderGym(){
+  const rows=[...state.gym].sort((a,b)=>a.date.localeCompare(b.date)),latest=rows[rows.length-1],first=rows[0];
+  gymDateInput.value=todayISO();
+  gymLatestWeight.textContent=latest?latest.weight.toFixed(1)+' kg':'—';gymLatestFatRate.textContent=latest?latest.fatRate.toFixed(1)+' %':'—';gymLatestFatMass.textContent=latest?latest.fatMass.toFixed(1)+' kg':'—';gymLatestMuscle.textContent=latest?latest.muscle.toFixed(1)+' kg':'—';
+  gymWeightDelta.textContent=latest&&first?(latest.weight-first.weight>0?'+':'')+(latest.weight-first.weight).toFixed(1)+' kg':'—';gymWeightDelta.className=latest&&first&&latest.weight-first.weight<=0?'down':'up';
+  gymFatMassDelta.textContent=latest&&first?(latest.fatMass-first.fatMass>0?'+':'')+(latest.fatMass-first.fatMass).toFixed(1)+' kg':'—';gymFatMassDelta.className=latest&&first&&latest.fatMass-first.fatMass<=0?'down':'up';
+  gymMuscleDelta.textContent=latest&&first?(latest.muscle-first.muscle>0?'+':'')+(latest.muscle-first.muscle).toFixed(1)+' kg':'—';gymMuscleDelta.className=latest&&first&&latest.muscle-first.muscle>=0?'down':'up';
+  gymAdjustmentAdvice.textContent=rows.length>=2?'実測が予測より遅い場合は、翌月の目標赤字を少し見直す提案を出します。設定は自動変更せず確認後に反映する設計です。':'測定が増えると目標調整案を表示します。';
+  gymHistory.innerHTML='';rows.slice().reverse().forEach(x=>{const d=x.date.split('-'),el=document.createElement('div');el.className='measure-item';el.innerHTML=`<div class="measure-date"><b>${Number(d[2])}</b><span>${Number(d[1])}月</span></div><div><b>${x.weight.toFixed(1)}kg / 体脂肪 ${x.fatRate.toFixed(1)}%</b><div class="measure-meta">${x.source}・脂肪量 ${x.fatMass.toFixed(1)}kg・筋肉 ${x.muscle.toFixed(1)}kg</div></div><div class="task-actions"><button type="button" data-delete>削除</button></div>`;el.querySelector('[data-delete]').onclick=()=>{state.gym=state.gym.filter(y=>y.id!==x.id);save();renderGym();renderHome()};gymHistory.appendChild(el)});
+  renderGymChart();
+}
+saveGymMeasureBtn.onclick=()=>{const weight=Number(gymWeightInput.value),fatRate=Number(gymFatRateInput.value),fatMass=Number(gymFatMassInput.value),muscle=Number(gymMuscleInput.value);if(!weight||!fatRate||!fatMass||!muscle){showToast('体重・体脂肪率・脂肪量・筋肉量を入力してください');return}state.gym.push({id:'g'+Date.now(),date:gymDateInput.value||todayISO(),source:gymSourceInput.value.trim()||'ジム TANITA',weight,fatRate,fatMass,muscle,bmi:Number(gymBmiInput.value)||null,visceral:Number(gymVisceralInput.value)||null,bmr:Number(gymBmrInput.value)||null,skeletal:Number(gymSkeletalInput.value)||null});state.settings.currentWeight=weight;save();gymForm.classList.add('hidden');renderGym();renderHome();showToast('ジム測定を保存しました')};
+
+
+
+
+/* v29: explicit DOM bindings for iPhone/WebView */
+const mindsetTopBtn=document.getElementById('mindsetTopBtn');
+const simMeal=document.getElementById('simMeal');
+const simWalk=document.getElementById('simWalk');
+const simDays=document.getElementById('simDays');
+const simMealValue=document.getElementById('simMealValue');
+const simWalkValue=document.getElementById('simWalkValue');
+const simDaysValue=document.getElementById('simDaysValue');
+const simWeeklyNet=document.getElementById('simWeeklyNet');
+const simDailyNet=document.getElementById('simDailyNet');
+const simMonthlyLoss=document.getElementById('simMonthlyLoss');
+const simWalkBurn=document.getElementById('simWalkBurn');
+const simRequired=document.getElementById('simRequired');
+const simAdvice=document.getElementById('simAdvice');
+const mindCurrentWeight=document.getElementById('mindCurrentWeight');
+const mindGoalWeight=document.getElementById('mindGoalWeight');
+const mindWeeklyPace=document.getElementById('mindWeeklyPace');
+const mindDailyDeficit=document.getElementById('mindDailyDeficit');
+
+const courseStatus=document.getElementById('courseStatus');
+const courseProgressFill=document.getElementById('courseProgressFill');
+const courseProgressText=document.getElementById('courseProgressText');
+const courseCurrentWeight=document.getElementById('courseCurrentWeight');
+const courseGoalWeight=document.getElementById('courseGoalWeight');
+const courseWeeklyPace=document.getElementById('courseWeeklyPace');
+const courseDailyDeficit=document.getElementById('courseDailyDeficit');
+const lessonEyebrow=document.getElementById('lessonEyebrow');
+const lessonTitle=document.getElementById('lessonTitle');
+const lessonLead=document.getElementById('lessonLead');
+const lessonBody=document.getElementById('lessonBody');
+const lessonPrevBtn=document.getElementById('lessonPrevBtn');
+const lessonCompleteBtn=document.getElementById('lessonCompleteBtn');
+const lessonNextBtn=document.getElementById('lessonNextBtn');
+const courseCompleteMessage=document.getElementById('courseCompleteMessage');
+
+/* LEARNING COURSE */
+function ensureLearningState(){
+  if(!state.learning || typeof state.learning!=='object'){
+    state.learning={currentStep:1,completed:[]};
+  }
+  if(!Array.isArray(state.learning.completed))state.learning.completed=[];
+  state.learning.currentStep=clamp(Number(state.learning.currentStep||1),1,8);
+  return state.learning;
+}
+
+const lessonData={
+  1:{
+    title:'痩せる仕組みを知る',
+    lead:'最初に覚えるのは「1日だけ」ではなく「1週間の積み重ね」で考えることです。',
+    render:()=>`
+      <div class="lesson-equation">
+        <div class="box"><b>食事</b><span>摂取カロリー</span></div>
+        <div class="sign">−</div>
+        <div class="box"><b>生活＋運動</b><span>消費カロリー</span></div>
+        <div class="sign">＝</div>
+        <div class="box"><b>赤字 / 黒字</b><span>7日間で見る</span></div>
+      </div>
+      <div class="lesson-check good">
+        今日1日だけで体脂肪の結果は決まりません。毎日の小さい赤字を、1週間でまとめて見るのが基本です。
+      </div>`
+  },
+  2:{
+    title:'1,400kcalって、どのくらい？',
+    lead:'「少なく食べる」ではなく、3食を普通に食べながら量を整えるイメージを持ちます。',
+    render:()=>`
+      <div class="lesson-simple-grid">
+        <div class="lesson-simple-card"><b>朝 350〜400</b><span>ご飯100g＋納豆＋卵＋味噌汁など</span></div>
+        <div class="lesson-simple-card"><b>昼 450〜500</b><span>ご飯120g＋鶏むね＋サラダ＋スープなど</span></div>
+        <div class="lesson-simple-card"><b>夜 500〜550</b><span>ご飯100g＋魚・肉＋野菜＋汁物など</span></div>
+      </div>
+      <div class="lesson-check">ポイントは「ご飯を抜く」ではなく、主食＋たんぱく質＋野菜を食べながら全体量を整えることです。</div>`
+  },
+  3:{
+    title:'毎回、献立を考えなくていい',
+    lead:'「何を食べる？」を毎回考えず、朝・昼・夜に2〜3個ずつ自分の型を持っておきます。',
+    render:()=>`
+      <div class="lesson-choice-grid">
+        <button type="button" class="lesson-choice" data-meal-template="breakfast-a"><b>朝A　納豆卵ご飯</b><span>約360kcal</span></button>
+        <button type="button" class="lesson-choice" data-meal-template="breakfast-b"><b>朝B　トースト＋ヨーグルト</b><span>約350kcal</span></button>
+        <button type="button" class="lesson-choice" data-meal-template="lunch-a"><b>昼A　鶏むね定食</b><span>約460kcal</span></button>
+        <button type="button" class="lesson-choice" data-meal-template="dinner-a"><b>夜A　焼き魚定食</b><span>約520kcal</span></button>
+      </div>
+      <div class="lesson-check good">型を選ぶだけにすると、カロリー計算と意思決定の回数を減らせます。</div>`
+  },
+  4:{
+    title:'運動量をイメージする',
+    lead:'「45分歩く」が何を意味するのか、時間と消費のイメージを持ちます。',
+    render:()=>`
+      <div class="lesson-simple-grid">
+        <div class="lesson-simple-card"><b>10分</b><span>約30〜40kcal。疲れた日の最低ライン。</span></div>
+        <div class="lesson-simple-card"><b>30分</b><span>約120〜150kcal。短めの運動。</span></div>
+        <div class="lesson-simple-card"><b>45分</b><span>約180〜220kcal。基本の目標。</span></div>
+      </div>
+      <div class="lesson-check good">45分を週5回なら、週約900〜1,100kcal程度の追加消費イメージです。</div>
+      <div class="actions"><button type="button" class="secondary" id="addWalkingTaskFromLesson">45分ウォーキングをタスクに追加</button></div>`
+  },
+  5:{
+    title:'食事と運動を組み合わせる',
+    lead:'食事だけで赤字を作るのではなく、歩行・筋トレなどを合わせて週の収支を作ります。',
+    render:()=>`
+      <div class="lesson-equation">
+        <div class="box"><b>食事</b><span>約1,400kcal/日</span></div>
+        <div class="sign">＋</div>
+        <div class="box"><b>歩行</b><span>45分 × 週5日</span></div>
+        <div class="sign">→</div>
+        <div class="box"><b>週の赤字</b><span>無理なく積み上げる</span></div>
+      </div>
+      <div class="lesson-check">下の「行動シミュレーター」で、食事と歩行を動かして自分で確かめられます。</div>
+      <div class="actions"><button type="button" class="secondary" id="jumpSimulatorBtn">シミュレーターへ移動</button></div>`
+  },
+  6:{
+    title:'体重が増えた日の考え方',
+    lead:'昨日より増えていても、それだけで脂肪が増えたとは判断しません。',
+    render:()=>`
+      <div class="lesson-simple-grid">
+        <div class="lesson-simple-card"><b>＋0.7kg</b><span>1日の体重変動</span></div>
+        <div class="lesson-simple-card"><b>原因はいろいろ</b><span>水分、塩分、食事量、排便、月経周期など</span></div>
+        <div class="lesson-simple-card"><b>判断は週・月</b><span>週平均とジム実測で確認</span></div>
+      </div>
+      <div class="lesson-check good">毎日は「できた行動」を評価。結果は週・月で見ます。</div>`
+  },
+  7:{
+    title:'ジム測定で答え合わせする',
+    lead:'カロリー計算は予測です。実測値を使って「計画が現実と合っているか」を確認します。',
+    render:()=>{
+      const gym=[...state.gym].sort((a,b)=>a.date.localeCompare(b.date));
+      const latest=gym[gym.length-1],first=gym[0];
+      return `
+        <div class="lesson-simple-grid">
+          <div class="lesson-simple-card"><b>${latest?latest.weight.toFixed(1)+'kg':'—'}</b><span>最新の実測体重</span></div>
+          <div class="lesson-simple-card"><b>${latest&&first?(latest.fatMass-first.fatMass).toFixed(1)+'kg':'—'}</b><span>初回からの脂肪量変化</span></div>
+          <div class="lesson-simple-card"><b>${latest&&first?((latest.muscle-first.muscle)>=0?'+':'')+(latest.muscle-first.muscle).toFixed(1)+'kg':'—'}</b><span>初回からの筋肉量変化</span></div>
+        </div>
+        <div class="lesson-check">予測より減り方が遅ければ、食事・運動・目標時期のどこを調整するか考えます。自動で厳しくするのではなく、実測から見直します。</div>
+        <div class="actions"><button type="button" class="secondary" id="jumpGymBtn">ジム測定を見る</button></div>`;
+    }
+  },
+  8:{
+    title:'今週の計画を作る',
+    lead:'最後は「48kgになる」ではなく、今週何をするかまで小さくします。',
+    render:()=>`
+      <div class="plan-preview">
+        <div><span>食事</span><b>平均 1,350〜1,450kcal</b></div>
+        <div><span>ウォーキング</span><b>45分 × 週4〜5回</b></div>
+        <div><span>筋トレ</span><b>週2回</b></div>
+        <div><span>評価</span><b>週の収支・月の実測</b></div>
+      </div>
+      <div class="lesson-check good">今週のゴールは「完璧に痩せる」ではなく、この行動を無理なく繰り返すことです。</div>
+      <div class="actions"><button type="button" class="primary" id="applyWeeklyPlanBtn">この内容を今週の計画に反映</button></div>`
+  }
+};
+
+function renderLearningCourse(){
+  const learning=ensureLearningState();
+  const step=clamp(Number(learning.currentStep||1),1,8);
+  const completed=[...new Set(learning.completed||[])];
+  const pct=Math.round(completed.length/8*100);
+  const plan=goalPlan();
+
+  courseStatus.textContent=`STEP ${step} / 8`;
+  courseProgressFill.style.width=pct+'%';
+  courseProgressText.textContent=pct+'% 完了';
+  courseCurrentWeight.textContent=state.settings.currentWeight.toFixed(1)+'kg';
+  courseGoalWeight.textContent=state.settings.goalWeight.toFixed(1)+'kg';
+  courseWeeklyPace.textContent='約 '+plan.weeklyKg.toFixed(2)+'kg/週';
+  courseDailyDeficit.textContent='約 -'+fmt(plan.daily)+'kcal';
+
+  document.querySelectorAll('#stepNav button').forEach(b=>{
+    const n=Number(b.dataset.step);
+    b.classList.toggle('active',n===step);
+    b.classList.toggle('done',completed.includes(n));
+  });
+
+  const lesson=lessonData[step];
+  lessonEyebrow.textContent='STEP '+step;
+  lessonTitle.textContent=lesson.title;
+  lessonLead.textContent=lesson.lead;
+  lessonBody.innerHTML=lesson.render();
+
+  lessonPrevBtn.disabled=step===1;
+  lessonPrevBtn.style.opacity=step===1?.45:1;
+  lessonNextBtn.textContent=step===8?'最初に戻る':'次へ →';
+  lessonCompleteBtn.textContent=completed.includes(step)?'✓ このSTEPは完了':'このSTEPを理解した';
+  courseCompleteMessage.classList.toggle('show',completed.length===8);
+
+  wireLessonActions(step);
+}
+
+function wireLessonActions(step){
+  lessonBody.querySelectorAll('[data-meal-template]').forEach(b=>b.onclick=()=>{
+    lessonBody.querySelectorAll('[data-meal-template]').forEach(x=>x.classList.remove('selected'));
+    b.classList.add('selected');
+    const map={
+      'breakfast-a':{meal:'朝食',name:'朝A 納豆卵ご飯',kcal:360,note:'ご飯100g＋納豆＋卵＋味噌汁'},
+      'breakfast-b':{meal:'朝食',name:'朝B トースト＋ヨーグルト',kcal:350,note:'6枚切りパン＋卵＋ヨーグルト＋果物'},
+      'lunch-a':{meal:'昼食',name:'昼A 鶏むね定食',kcal:460,note:'ご飯120g＋鶏むね＋サラダ＋スープ'},
+      'dinner-a':{meal:'夕食',name:'夜A 焼き魚定食',kcal:520,note:'ご飯100g＋焼き魚＋野菜＋冷奴＋味噌汁'}
+    };
+    const t=map[b.dataset.mealTemplate];
+    if(t && !state.mealTemplates.some(x=>x.name===t.name)){
+      state.mealTemplates.push({id:'m'+Date.now(),...t});save();showToast('献立の型を定番に追加しました');
+    }else{
+      showToast('この献立はすでに定番に入っています');
+    }
+  });
+
+  const addWalk=document.getElementById('addWalkingTaskFromLesson');
+  if(addWalk)addWalk.onclick=()=>{
+    if(!state.tasks.some(t=>t.name==='45分ウォーキング')){
+      state.tasks.push({id:'t'+Date.now(),name:'45分ウォーキング',kind:'ウォーキング',minutes:45,kcal:200,target:5,points:2,active:true});
+      save();renderTasks();showToast('45分ウォーキングを運動タスクに追加しました');
+    }else showToast('すでに運動タスクに入っています');
+  };
+
+  const jumpSim=document.getElementById('jumpSimulatorBtn');
+  if(jumpSim)jumpSim.onclick=()=>{
+    const target=document.querySelector('#page-mindset .simulator-grid');
+    if(target){
+      const y=target.getBoundingClientRect().top + (window.pageYOffset||document.documentElement.scrollTop||0) - 12;
+      window.scrollTo(0,Math.max(0,y));
+    }
+  };
+
+  const jumpGym=document.getElementById('jumpGymBtn');
+  if(jumpGym)jumpGym.onclick=()=>page('gym');
+
+  const apply=document.getElementById('applyWeeklyPlanBtn');
+  if(apply)apply.onclick=()=>{
+    if(!state.tasks.some(t=>t.name==='45分ウォーキング')){
+      state.tasks.push({id:'t'+Date.now(),name:'45分ウォーキング',kind:'ウォーキング',minutes:45,kcal:200,target:5,points:2,active:true});
+    }
+    const workout=state.tasks.find(t=>t.kind==='筋トレ');
+    if(workout)workout.target=2;
+    save();renderTasks();showToast('今週の運動計画を反映しました');
+  };
+}
+
+document.querySelectorAll('#stepNav button').forEach(b=>b.onclick=()=>{
+  const learning=ensureLearningState();
+  learning.currentStep=clamp(Number(b.dataset.step),1,8);
+  save();
+  renderLearningCourse();
+});
+lessonPrevBtn.onclick=()=>{
+  const learning=ensureLearningState();
+  learning.currentStep=Math.max(1,learning.currentStep-1);
+  save();
+  renderLearningCourse();
+};
+lessonNextBtn.onclick=()=>{
+  const learning=ensureLearningState();
+  learning.currentStep=learning.currentStep===8?1:learning.currentStep+1;
+  save();
+  renderLearningCourse();
+};
+lessonCompleteBtn.onclick=()=>{
+  const learning=ensureLearningState();
+  const step=learning.currentStep;
+  if(!learning.completed.includes(step))learning.completed.push(step);
+  learning.currentStep=step<8?step+1:8;
+  save();
+  renderLearningCourse();
+};
+
+/* MINDSET */
+function renderMindset(){
+  renderLearningCourse();
+  const plan=goalPlan();
+  if(mindCurrentWeight)mindCurrentWeight.textContent=state.settings.currentWeight.toFixed(1)+' kg';
+  if(mindGoalWeight)mindGoalWeight.textContent=state.settings.goalWeight.toFixed(1)+' kg';
+  if(mindWeeklyPace)mindWeeklyPace.textContent='約 '+plan.weeklyKg.toFixed(2)+' kg/週';
+  if(mindDailyDeficit)mindDailyDeficit.textContent='約 -'+fmt(plan.daily)+' kcal/日';
+  if(mindsetTopBtn)mindsetTopBtn.classList.add('active');
+  renderMindsetSimulator();
+}
+function renderMindsetSimulator(){
+  if(!simMeal||!simWalk||!simDays)return;
+  const meal=Number(simMeal.value);
+  const walkMin=Number(simWalk.value);
+  const walkDays=Number(simDays.value);
+  simMealValue.textContent=fmt(meal)+' kcal';
+  simWalkValue.textContent=walkMin+'分';
+  simDaysValue.textContent=walkDays+'日/週';
+
+  // Approximate extra walking burn for ~64kg: about 4.4 kcal/min for brisk walking.
+  const walkPerSession=Math.round(walkMin*4.4);
+  const weeklyWalk=walkPerSession*walkDays;
+
+  // Use baseDailyBurn() as ordinary daily living estimate, and add only explicit walking here.
+  const base=baseDailyBurn();
+  const weeklyFoodBalance=(meal-base)*7;
+  const weeklyNet=Math.round(weeklyFoodBalance-weeklyWalk);
+  const dailyAvg=Math.round(weeklyNet/7);
+  const monthLoss=weeklyNet<0 ? Math.abs(weeklyNet)*4.345/7700 : 0;
+  const required=-Math.round(goalPlan().weekly);
+
+  simWeeklyNet.textContent=signed(weeklyNet)+' kcal/週';
+  simDailyNet.textContent=signed(dailyAvg)+' kcal/日';
+  simMonthlyLoss.textContent=weeklyNet<0?'約 -'+monthLoss.toFixed(2)+' kg/月':'減少予測なし';
+  simWalkBurn.textContent=fmt(weeklyWalk)+' kcal';
+  simRequired.textContent=signed(required)+' kcal/週';
+
+  simAdvice.className='mindset-note '+(weeklyNet<=required?'good':weeklyNet<0?'':'warn');
+  if(weeklyNet<=required){
+    simAdvice.textContent='この条件は、現在の48kg目標に必要な赤字ペース付近またはそれ以上です。無理にさらに削らず、継続できるかを優先します。';
+  }else if(weeklyNet<0){
+    simAdvice.textContent='赤字にはなっています。48kg目標よりはゆるやかなペースなので、食事・歩行・目標時期のどこを調整するか考える材料になります。';
+  }else{
+    simAdvice.textContent='この条件では維持〜黒字寄りです。1日で取り返さず、食事か歩行を少しだけ調整してみるのが現実的です。';
+  }
+}
+if(mindsetTopBtn)mindsetTopBtn.onclick=()=>page('mindset');
+[simMeal,simWalk,simDays].filter(Boolean).forEach(x=>x.addEventListener('input',renderMindsetSimulator));
+
+/* SETTINGS */
+function renderSettings(){settingGoalWeight.value=state.settings.goalWeight;settingGoalDate.value=state.settings.goalDate;settingBmr.value=state.settings.bmr;settingActivity.value=String(state.settings.activity);settingExerciseTarget.value=state.settings.exerciseTarget}
+saveSettingsBtn.onclick=()=>{state.settings.goalWeight=Number(settingGoalWeight.value)||state.settings.goalWeight;state.settings.goalDate=settingGoalDate.value||state.settings.goalDate;state.settings.bmr=Number(settingBmr.value)||state.settings.bmr;state.settings.activity=Number(settingActivity.value)||state.settings.activity;state.settings.exerciseTarget=Number(settingExerciseTarget.value)||state.settings.exerciseTarget;save();renderHome();showToast('設定を保存しました')};
+
+
+function openHashPage(){
+  if(location.hash==='#page-mindset'){
+    try{ page('mindset'); }catch(e){
+      const p=document.getElementById('page-mindset');
+      if(p)p.style.display='block';
+    }
+  }
+}
+window.addEventListener('hashchange',openHashPage);
+
+/* init */
+ensureLearningState();
+save();
+renderHome();renderRecord();renderTasks();renderBalance();renderGym();renderSettings();
+window.addEventListener('resize',()=>{if(document.getElementById('page-home').classList.contains('active'))renderHome();if(document.getElementById('page-balance').classList.contains('active'))renderBalance();if(document.getElementById('page-gym').classList.contains('active'))renderGymChart()});
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  });
+}
+</script>
+
+</body>
+</html>

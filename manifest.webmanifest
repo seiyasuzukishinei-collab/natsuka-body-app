@@ -1,0 +1,22 @@
+{
+  "name": "夏香の肉体改造アプリ",
+  "short_name": "夏香の肉体改造",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#25314a",
+  "description": "食事・運動・体組成・学習をまとめて管理するダイエット支援アプリ",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
